@@ -1,6 +1,7 @@
 import L from "leaflet";
 import Chart from "chart.js/auto";
 import { LAYERS, BASEMAP, sourceUrl, MODE, CAMERA_3D } from "./config.js";
+import { hideTreePanel } from "./map3d.js";
 
 let map, overlayGroup, layerControl=null, chartObj=null, basemapLayers=[];
 const status = () => document.getElementById("status");
@@ -20,6 +21,7 @@ export function initMap(){
 }
 export function showMap(){ document.getElementById("cesium").style.display="none";
   document.getElementById("map").style.display="block"; document.getElementById("side").style.display="block";
+  hideTreePanel();
   if(map) map.invalidateSize(); }
 
 function googleSat(){ return [
