@@ -1,0 +1,4 @@
+node_modules
+dist
+# Bỏ comment dòng dưới nếu KHÔNG muốn commit dữ liệu đã tải về:
+# public/data/*.geojson

@@ -1,0 +1,632 @@
+﻿{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5625861, 11.5286187] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH CHÍNH XÁC JING CHENG",
+        "loaiHinh": "Cơ khí chính xác",
+        "dienThoai": "02716271717",
+        "loHang": "A2-2",
+        "dienTich": 18000
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5590098, 11.5283889] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH DỆT NHUỘM ALL SEVEN",
+        "loaiHinh": "Dệt may",
+        "dienThoai": "0933032862",
+        "loHang": "A1-1~5",
+        "dienTich": 54006
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5569347, 11.5281683] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH CÔNG NGHIỆP CHÍNH XÁC CHENKAI",
+        "loaiHinh": "Cơ khí chính xác",
+        "dienThoai": "02716.295498",
+        "loHang": "A1-1,2",
+        "dienTich": 27944
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5646912, 11.5231539] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH QUỐC TẾ TÂN PHONG",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "02716281188",
+        "loHang": "A7-6~8",
+        "dienTich": 80992
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5605203, 11.5111819] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH HAOHUA (VIỆT NAM)",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "",
+        "loHang": "A17-A18",
+        "dienTich": 433593
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5593114, 11.4979291] },
+      "properties": {
+        "tenCty": "Nhà máy giết mổ và chế biến thịt Japfa Bình Phước",
+        "loaiHinh": "Chế biến thực phẩm",
+        "dienThoai": "0271 3621 679",
+        "loHang": "B6",
+        "dienTich": 148212
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5680863, 11.4962946] },
+      "properties": {
+        "tenCty": "CTY TNHH JAPFA COMFEED VIỆT NAM - CN Bình Phước 3",
+        "loaiHinh": "Chế biến thực phẩm",
+        "dienThoai": "0271 3621 679",
+        "loHang": "B7",
+        "dienTich": 103434
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5717585, 11.4995238] },
+      "properties": {
+        "tenCty": "TRẠM BÊ TÔNG HẢI VƯƠNG",
+        "loaiHinh": "Vật liệu xây dựng",
+        "dienThoai": "",
+        "loHang": "DV",
+        "dienTich": 5000
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5499872, 11.5066368] },
+      "properties": {
+        "tenCty": "Nhà máy XLNT KCN Minh Hưng Sikico",
+        "loaiHinh": "Hạ tầng nước",
+        "dienThoai": "",
+        "loHang": "HT-XLNT",
+        "dienTich": 85135
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5525974, 11.5156847] },
+      "properties": {
+        "tenCty": "Nhà máy cấp nước",
+        "loaiHinh": "Hạ tầng nước",
+        "dienThoai": "",
+        "loHang": "HT-CN",
+        "dienTich": 35922
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5613687, 11.5284957] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH AVANT TECH",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "+886-972-702-996",
+        "loHang": "A2-1",
+        "dienTich": 17999
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5632601, 11.5286783] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH QUỐC TẾ LANE",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "00886-983250534",
+        "loHang": "A2-3",
+        "dienTich": 17999
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5584738, 11.5279637] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH HT INNOVATION",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "032 5983387",
+        "loHang": "A5-6",
+        "dienTich": 9608
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5642052, 11.5278166] },
+      "properties": {
+        "tenCty": "CÔNG TY CỔ PHẦN CÔNG NGHIỆP NAM HƯNG PHƯỚC",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0978567554",
+        "loHang": "A7-10",
+        "dienTich": 26956
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5642953, 11.5265975] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH UNIND (VIỆT NAM)",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "",
+        "loHang": "A7-9",
+        "dienTich": 26794
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5647001, 11.5210328] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH NỘI THẤT LIFEART",
+        "loaiHinh": "Nội thất",
+        "dienThoai": "0933032862",
+        "loHang": "A7-4",
+        "dienTich": 26323
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5647282, 11.5199476] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH QUỐC TẾ ALL GLORY",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0798742139",
+        "loHang": "A7-3",
+        "dienTich": 27152
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5652448, 11.5185208] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH SẢN PHẨM CÔNG NGHIỆP VP VIỆT NAM (TRINITY ENTERPRISE CO., LTD.)",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "6087421700",
+        "loHang": "A7-1",
+        "dienTich": 20699
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5664733, 11.5186365] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH PIONEER ENTERPRISE VIỆT NAM (TRINITY ENTERPRISE CO., LTD.)",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0387689563",
+        "loHang": "A7-2",
+        "dienTich": 24096
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5632209, 11.5156186] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH GIẤY AN VIỆT PHÁT",
+        "loaiHinh": "Sản xuất giấy",
+        "dienThoai": "028 3636 4828",
+        "loHang": "A14-2~9",
+        "dienTich": 117547
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5679612, 11.5069161] },
+      "properties": {
+        "tenCty": "ACCORD INVESTMENT CORPOATION (CÔNG TY YUSHINE VIỆT NAM)",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0921651783",
+        "loHang": "A15-8",
+        "dienTich": 30430
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.570687, 11.5048509] },
+      "properties": {
+        "tenCty": "DDK",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "02743729199",
+        "loHang": "A15-10,11",
+        "dienTich": 76898
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5694889, 11.4964447] },
+      "properties": {
+        "tenCty": "ZHEJIANG QINGYI INDUSTRIAL CO., LTD",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0921651784",
+        "loHang": "B9-1,2",
+        "dienTich": 40375
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5714791, 11.4956195] },
+      "properties": {
+        "tenCty": "JSS INVESTMENT (VIỆT NAM)",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0876512294",
+        "loHang": "B9-3",
+        "dienTich": 20349
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5516357, 11.5040852] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH MTV BAF MEAT BÌNH PHƯỚC",
+        "loaiHinh": "Chế biến thực phẩm",
+        "dienThoai": "0766074787",
+        "loHang": "B1",
+        "dienTich": 47777
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5524214, 11.5023575] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH KỸ THUẬT SEEMOON VIỆT NAM",
+        "loaiHinh": "Cơ khí chính xác",
+        "dienThoai": "(0086) 18506734278",
+        "loHang": "B4-1",
+        "dienTich": 15374
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5538305, 11.5152166] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH DỆT MAY XIANG FU",
+        "loaiHinh": "Dệt may",
+        "dienThoai": "0857136618",
+        "loHang": "A11-5",
+        "dienTich": 13503
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5551173, 11.5224029] },
+      "properties": {
+        "tenCty": "CÔNG TY CỔ PHẦN GIẤY KHẢI HOÀN BÌNH PHƯỚC",
+        "loaiHinh": "Sản xuất giấy",
+        "dienThoai": "0918166366",
+        "loHang": "A3-4,5",
+        "dienTich": 24879
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5550261, 11.5208155] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH TAYU STAR",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "+886-4-25222019",
+        "loHang": "A3-2,3",
+        "dienTich": 31833
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.554796, 11.5274016] },
+      "properties": {
+        "tenCty": "CTY TNHH LEGEND BP",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0978567554",
+        "loHang": "A3-10",
+        "dienTich": 6460
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5548711, 11.526424] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH SHIMER VIỆT NAM",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0918557278",
+        "loHang": "A3-8,9",
+        "dienTich": 20962
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5549059, 11.5247026] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH TÂN LONG BẢO VIỆT NAM",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0274.3715680",
+        "loHang": "A3-7",
+        "dienTich": 12487
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5549703, 11.5236776] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH ZHENG FENG",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0272 3644 711",
+        "loHang": "A3-6",
+        "dienTich": 12371
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5595002, 11.5235948] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH GIẤY A.F.C BÌNH PHƯỚC",
+        "loaiHinh": "Sản xuất giấy",
+        "dienThoai": "0913694541",
+        "loHang": "A5-1,2",
+        "dienTich": 42713
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5593988, 11.5262082] },
+      "properties": {
+        "tenCty": "CÔNG TY CỔ PHẦN NAM LONG MINH HƯNG",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0913724988",
+        "loHang": "A5-3~10",
+        "dienTich": 81554
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5578697, 11.5228734] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH PINGFU HOME PRODUCTS",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "001-6786021489",
+        "loHang": "A4",
+        "dienTich": 136847
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5569419, 11.5217338] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH FENG YI",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0918095478",
+        "loHang": "A8-6,7",
+        "dienTich": 25071
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5570062, 11.5205143] },
+      "properties": {
+        "tenCty": "CÔNG TY CỔ PHẦN GIẤY KHẢI HOÀN BÌNH PHƯỚC",
+        "loaiHinh": "Sản xuất giấy",
+        "dienThoai": "0918166366",
+        "loHang": "A3-4,5",
+        "dienTich": 24879
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5572423, 11.5186431] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH AID CABINETRY",
+        "loaiHinh": "Nội thất",
+        "dienThoai": "+84 274365720",
+        "loHang": "A8-1~12",
+        "dienTich": 72860
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5595279, 11.5218905] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH VIỆT NAM WEALTHY BEST",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0938202155",
+        "loHang": "A22",
+        "dienTich": 48659
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5597318, 11.520156] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH VIỆT NAM WELLGAIN INDUSTRIAL (GLOBAL STATE LLC)",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0933127168",
+        "loHang": "A23",
+        "dienTich": 48297
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5607349, 11.5173122] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH VIỆT NAM ERAWIN TEXTILE (GLOBAL STATE LLC)",
+        "loaiHinh": "Dệt may",
+        "dienThoai": "0933127168",
+        "loHang": "A21",
+        "dienTich": 47086
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5650291, 11.5107554] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH MINLAND ENERGY TECHNOLOGY (VIỆT NAM)",
+        "loaiHinh": "Năng lượng",
+        "dienThoai": "",
+        "loHang": "B9-3",
+        "dienTich": 17174
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5594316, 11.5162804] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH AMBER BUILDING VIỆT NAM",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0347199242",
+        "loHang": "A15",
+        "dienTich": 11779
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5606386, 11.5158546] },
+      "properties": {
+        "tenCty": "CÔNG TY CỔ PHẦN QH PACKAGING",
+        "loaiHinh": "Bao bì",
+        "dienThoai": "0909077722",
+        "loHang": "A15-9",
+        "dienTich": 22910
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5600753, 11.5142987] },
+      "properties": {
+        "tenCty": "CÔNG TY CỔ PHẦN ĐẦU TƯ THƯƠNG MẠI GTS BÌNH PHƯỚC",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0986008388",
+        "loHang": "A14-1",
+        "dienTich": 24210
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5622449, 11.5272219] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH DDK INTERNATIONAL VIỆT NAM",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "02743729199",
+        "loHang": "A19",
+        "dienTich": 82549
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5626636, 11.5245742] },
+      "properties": {
+        "tenCty": "CÔNG TY CỔ PHẦN THƯƠNG MẠI VÀ CÔNG NGHIỆP BOSS",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0934462008",
+        "loHang": "A20",
+        "dienTich": 82256
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5589562, 11.5085864] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH HAOHUA (VIỆT NAM) DV3",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0906336605",
+        "loHang": "DV3",
+        "dienTich": 27500
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5532695, 11.5147268] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH DỆT SUCCESS LOYAL VIỆT NAM",
+        "loaiHinh": "Dệt may",
+        "dienThoai": "",
+        "loHang": "A11",
+        "dienTich": 16147
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5525453, 11.5168399] },
+      "properties": {
+        "tenCty": "HONGKONG JINYI FIBRE CO.,LIMITED",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "",
+        "loHang": "A21",
+        "dienTich": 24864
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5567684, 11.5076295] },
+      "properties": {
+        "tenCty": "Khu Công Nghiệp Minh Hưng - Sikico (Minh Hung Sikico Industrial Park)",
+        "loaiHinh": "Hạ tầng KCN",
+        "dienThoai": "0972 70 28 70",
+        "loHang": "KCN",
+        "dienTich": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5621774, 11.5188849] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH NGŨ KIM YOUDE VIỆT NAM",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "0356272539",
+        "loHang": "A10",
+        "dienTich": 177452
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5532856, 11.5159215] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH THƯƠNG MẠI VECI",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "",
+        "loHang": "A12",
+        "dienTich": 13304
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5651988, 11.5094458] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH SẢN XUẤT CÔNG NGHIỆP GIA KHANG",
+        "loaiHinh": "Công ty sản xuất",
+        "dienThoai": "",
+        "loHang": "A13",
+        "dienTich": 28000
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5690473, 11.5053655] },
+      "properties": {
+        "tenCty": "CÔNG TY TNHH GIẤY TISSUE K-C VIỆT NAM",
+        "loaiHinh": "Sản xuất giấy",
+        "dienThoai": "0921651783",
+        "loHang": "A16",
+        "dienTich": 31936
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.5590339, 11.5098898] },
+      "properties": {
+        "tenCty": "Vòng xoay 1",
+        "loaiHinh": "Hạ tầng KCN",
+        "dienThoai": "",
+        "loHang": "GT",
+        "dienTich": 0
+      }
+    }
+  ]
+}
