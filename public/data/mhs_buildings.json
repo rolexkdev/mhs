@@ -1,0 +1,2208 @@
+{
+  "buildings": [
+    {
+      "tenCty": "ACCORD INVESTMENT CORPOATION (CÔNG TY YUSHINE VIỆT NAM)",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A15-8",
+      "dienTich": 30430,
+      "dienThoai": "0921651783",
+      "height": 19,
+      "polygon": [
+        [
+          106.56715510696041,
+          11.506447330656641
+        ],
+        [
+          106.56876729303958,
+          11.506447330656641
+        ],
+        [
+          106.56876729303958,
+          11.507384869343358
+        ],
+        [
+          106.56715510696041,
+          11.507384869343358
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH GIẤY TISSUE K-C VIỆT NAM",
+      "loaiHinh": "Sản xuất giấy",
+      "loHang": "A16",
+      "dienTich": 31936,
+      "dienThoai": "0921651783",
+      "height": 14,
+      "polygon": [
+        [
+          106.56832417847572,
+          11.504838805758373
+        ],
+        [
+          106.56977042152427,
+          11.504838805758373
+        ],
+        [
+          106.56977042152427,
+          11.505892194241627
+        ],
+        [
+          106.56832417847572,
+          11.505892194241627
+        ]
+      ]
+    },
+    {
+      "tenCty": "DDK",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A15-10,11",
+      "dienTich": 76898,
+      "dienThoai": "02743729199",
+      "height": 15,
+      "polygon": [
+        [
+          106.5699638797977,
+          11.504142308857666
+        ],
+        [
+          106.57141012020232,
+          11.504142308857666
+        ],
+        [
+          106.57141012020232,
+          11.505559491142332
+        ],
+        [
+          106.5699638797977,
+          11.505559491142332
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH MINLAND ENERGY TECHNOLOGY (VIỆT NAM)",
+      "loaiHinh": "Năng lượng",
+      "loHang": "B9-3",
+      "dienTich": 17174,
+      "dienThoai": "",
+      "height": 19,
+      "polygon": [
+        [
+          106.56449133297603,
+          11.510358623008589
+        ],
+        [
+          106.56556686702397,
+          11.510358623008589
+        ],
+        [
+          106.56556686702397,
+          11.511152176991413
+        ],
+        [
+          106.56449133297603,
+          11.511152176991413
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH CHÍNH XÁC JING CHENG",
+      "loaiHinh": "Cơ khí chính xác",
+      "loHang": "A2-2",
+      "dienTich": 18000,
+      "dienThoai": "02716271717",
+      "height": 11,
+      "polygon": [
+        [
+          106.56230185086298,
+          11.528340185589313
+        ],
+        [
+          106.56287034913703,
+          11.528340185589313
+        ],
+        [
+          106.56287034913703,
+          11.528897214410689
+        ],
+        [
+          106.56230185086298,
+          11.528897214410689
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH DỆT NHUỘM ALL SEVEN",
+      "loaiHinh": "Dệt may",
+      "loHang": "A1-1~5",
+      "dienTich": 54006,
+      "dienThoai": "0933032862",
+      "height": 18,
+      "polygon": [
+        [
+          106.55872013691052,
+          11.528105080631178
+        ],
+        [
+          106.55929946308947,
+          11.528105080631178
+        ],
+        [
+          106.55929946308947,
+          11.52867271936882
+        ],
+        [
+          106.55872013691052,
+          11.52867271936882
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH CÔNG NGHIỆP CHÍNH XÁC CHENKAI",
+      "loaiHinh": "Cơ khí chính xác",
+      "loHang": "A1-1,2",
+      "dienTich": 27944,
+      "dienThoai": "02716.295498",
+      "height": 11,
+      "polygon": [
+        [
+          106.55628231443922,
+          11.527729839650656
+        ],
+        [
+          106.55758708556078,
+          11.527729839650656
+        ],
+        [
+          106.55758708556078,
+          11.528606760349346
+        ],
+        [
+          106.55628231443922,
+          11.528606760349346
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH QUỐC TẾ TÂN PHONG",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A7-6~8",
+      "dienTich": 80992,
+      "dienThoai": "02716281188",
+      "height": 12,
+      "polygon": [
+        [
+          106.56378200478373,
+          11.522397487145493
+        ],
+        [
+          106.56560039521626,
+          11.522397487145493
+        ],
+        [
+          106.56560039521626,
+          11.523910312854508
+        ],
+        [
+          106.56378200478373,
+          11.523910312854508
+        ]
+      ]
+    },
+    {
+      "tenCty": "Nhà máy giết mổ và chế biến thịt Japfa Bình Phước",
+      "loaiHinh": "Chế biến thực phẩm",
+      "loHang": "B6",
+      "dienTich": 148212,
+      "dienThoai": "0271 3621 679",
+      "height": 10,
+      "polygon": [
+        [
+          106.55839204949027,
+          11.4970281990991
+        ],
+        [
+          106.56023075050973,
+          11.4970281990991
+        ],
+        [
+          106.56023075050973,
+          11.4988300009009
+        ],
+        [
+          106.55839204949027,
+          11.4988300009009
+        ]
+      ]
+    },
+    {
+      "tenCty": "CTY TNHH JAPFA COMFEED VIỆT NAM - CN Bình Phước 3",
+      "loaiHinh": "Chế biến thực phẩm",
+      "loHang": "B7",
+      "dienTich": 103434,
+      "dienThoai": "0271 3621 679",
+      "height": 15,
+      "polygon": [
+        [
+          106.56749373414607,
+          11.495713922441642
+        ],
+        [
+          106.56867886585394,
+          11.495713922441642
+        ],
+        [
+          106.56867886585394,
+          11.49687527755836
+        ],
+        [
+          106.56749373414607,
+          11.49687527755836
+        ]
+      ]
+    },
+    {
+      "tenCty": "TRẠM BÊ TÔNG HẢI VƯƠNG",
+      "loaiHinh": "Vật liệu xây dựng",
+      "loHang": "DV",
+      "dienTich": 5000,
+      "dienThoai": "",
+      "height": 11,
+      "polygon": [
+        [
+          106.57144583684034,
+          11.499325124116769
+        ],
+        [
+          106.57207116315966,
+          11.499325124116769
+        ],
+        [
+          106.57207116315966,
+          11.499722475883232
+        ],
+        [
+          106.57144583684034,
+          11.499722475883232
+        ]
+      ]
+    },
+    {
+      "tenCty": "Nhà máy XLNT KCN Minh Hưng Sikico",
+      "loaiHinh": "Hạ tầng nước",
+      "loHang": "HT-XLNT",
+      "dienTich": 85135,
+      "dienThoai": "",
+      "height": 17,
+      "polygon": [
+        [
+          106.54906782105746,
+          11.505816284183512
+        ],
+        [
+          106.55090657894254,
+          11.505816284183512
+        ],
+        [
+          106.55090657894254,
+          11.50745731581649
+        ],
+        [
+          106.54906782105746,
+          11.50745731581649
+        ]
+      ]
+    },
+    {
+      "tenCty": "Nhà máy cấp nước",
+      "loaiHinh": "Hạ tầng nước",
+      "loHang": "HT-CN",
+      "dienTich": 35922,
+      "dienThoai": "",
+      "height": 17,
+      "polygon": [
+        [
+          106.55229104743823,
+          11.515384514287417
+        ],
+        [
+          106.55290375256176,
+          11.515384514287417
+        ],
+        [
+          106.55290375256176,
+          11.515984885712582
+        ],
+        [
+          106.55229104743823,
+          11.515984885712582
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH AVANT TECH",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A2-1",
+      "dienTich": 17999,
+      "dienThoai": "+886-972-702-996",
+      "height": 10,
+      "polygon": [
+        [
+          106.5608546474163,
+          11.528128386657535
+        ],
+        [
+          106.5618827525837,
+          11.528128386657535
+        ],
+        [
+          106.5618827525837,
+          11.528863013342466
+        ],
+        [
+          106.5608546474163,
+          11.528863013342466
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH QUỐC TẾ LANE",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A2-3",
+      "dienTich": 17999,
+      "dienThoai": "00886-983250534",
+      "height": 11,
+      "polygon": [
+        [
+          106.56297585080266,
+          11.528399785589311
+        ],
+        [
+          106.56354434919733,
+          11.528399785589311
+        ],
+        [
+          106.56354434919733,
+          11.528956814410687
+        ],
+        [
+          106.56297585080266,
+          11.528956814410687
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH HT INNOVATION",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A5-6",
+      "dienTich": 9608,
+      "dienThoai": "032 5983387",
+      "height": 19,
+      "polygon": [
+        [
+          106.55818413734897,
+          11.52769509080864
+        ],
+        [
+          106.55876346265103,
+          11.52769509080864
+        ],
+        [
+          106.55876346265103,
+          11.528232309191361
+        ],
+        [
+          106.55818413734897,
+          11.528232309191361
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY CỔ PHẦN CÔNG NGHIỆP NAM HƯNG PHƯỚC",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A7-10",
+      "dienTich": 26956,
+      "dienThoai": "0978567554",
+      "height": 18,
+      "polygon": [
+        [
+          106.56368126818154,
+          11.527319671448875
+        ],
+        [
+          106.56472913181847,
+          11.527319671448875
+        ],
+        [
+          106.56472913181847,
+          11.528313528551124
+        ],
+        [
+          106.56368126818154,
+          11.528313528551124
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH UNIND (VIỆT NAM)",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A7-9",
+      "dienTich": 26794,
+      "dienThoai": "",
+      "height": 9,
+      "polygon": [
+        [
+          106.5637713704551,
+          11.526115065871059
+        ],
+        [
+          106.5648192295449,
+          11.526115065871059
+        ],
+        [
+          106.5648192295449,
+          11.52707993412894
+        ],
+        [
+          106.5637713704551,
+          11.52707993412894
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH NỘI THẤT LIFEART",
+      "loaiHinh": "Nội thất",
+      "loHang": "A7-4",
+      "dienTich": 26323,
+      "dienThoai": "0933032862",
+      "height": 14,
+      "polygon": [
+        [
+          106.56423479406912,
+          11.52060850309543
+        ],
+        [
+          106.56516540593087,
+          11.52060850309543
+        ],
+        [
+          106.56516540593087,
+          11.521457096904571
+        ],
+        [
+          106.56423479406912,
+          11.521457096904571
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH QUỐC TẾ ALL GLORY",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A7-3",
+      "dienTich": 27152,
+      "dienThoai": "0798742139",
+      "height": 12,
+      "polygon": [
+        [
+          106.56426289586544,
+          11.519491669307866
+        ],
+        [
+          106.56519350413457,
+          11.519491669307866
+        ],
+        [
+          106.56519350413457,
+          11.520403530692134
+        ],
+        [
+          106.56426289586544,
+          11.520403530692134
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH SẢN PHẨM CÔNG NGHIỆP VP VIỆT NAM (TRINITY ENTERPRISE CO., LTD.)",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A7-1",
+      "dienTich": 20699,
+      "dienThoai": "6087421700",
+      "height": 10,
+      "polygon": [
+        [
+          106.56472643659782,
+          11.518098875852186
+        ],
+        [
+          106.56576316340218,
+          11.518098875852186
+        ],
+        [
+          106.56576316340218,
+          11.518942724147813
+        ],
+        [
+          106.56472643659782,
+          11.518942724147813
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH PIONEER ENTERPRISE VIỆT NAM (TRINITY ENTERPRISE CO., LTD.)",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A7-2",
+      "dienTich": 24096,
+      "dienThoai": "0387689563",
+      "height": 16,
+      "polygon": [
+        [
+          106.5659549363845,
+          11.518197037339094
+        ],
+        [
+          106.5669916636155,
+          11.518197037339094
+        ],
+        [
+          106.5669916636155,
+          11.519075962660905
+        ],
+        [
+          106.5659549363845,
+          11.519075962660905
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH GIẤY AN VIỆT PHÁT",
+      "loaiHinh": "Sản xuất giấy",
+      "loHang": "A14-2~9",
+      "dienTich": 117547,
+      "dienThoai": "028 3636 4828",
+      "height": 19,
+      "polygon": [
+        [
+          106.56230149170555,
+          11.5147176990991
+        ],
+        [
+          106.56414030829445,
+          11.5147176990991
+        ],
+        [
+          106.56414030829445,
+          11.5165195009009
+        ],
+        [
+          106.56230149170555,
+          11.5165195009009
+        ]
+      ]
+    },
+    {
+      "tenCty": "ZHEJIANG QINGYI INDUSTRIAL CO., LTD",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "B9-1,2",
+      "dienTich": 40375,
+      "dienThoai": "0921651784",
+      "height": 11,
+      "polygon": [
+        [
+          106.56889633383034,
+          11.495911684260587
+        ],
+        [
+          106.57008146616965,
+          11.495911684260587
+        ],
+        [
+          106.57008146616965,
+          11.496977715739412
+        ],
+        [
+          106.56889633383034,
+          11.496977715739412
+        ]
+      ]
+    },
+    {
+      "tenCty": "JSS INVESTMENT (VIỆT NAM)",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "B9-3",
+      "dienTich": 20349,
+      "dienThoai": "0876512294",
+      "height": 12,
+      "polygon": [
+        [
+          106.57079877448409,
+          11.495247903039607
+        ],
+        [
+          106.57215942551592,
+          11.495247903039607
+        ],
+        [
+          106.57215942551592,
+          11.495991096960394
+        ],
+        [
+          106.57079877448409,
+          11.495991096960394
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH MTV BAF MEAT BÌNH PHƯỚC",
+      "loaiHinh": "Chế biến thực phẩm",
+      "loHang": "B1",
+      "dienTich": 47777,
+      "dienThoai": "0766074787",
+      "height": 11,
+      "polygon": [
+        [
+          106.5508249921264,
+          11.503444795515703
+        ],
+        [
+          106.55244640787362,
+          11.503444795515703
+        ],
+        [
+          106.55244640787362,
+          11.504725604484298
+        ],
+        [
+          106.5508249921264,
+          11.504725604484298
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH KỸ THUẬT SEEMOON VIỆT NAM",
+      "loaiHinh": "Cơ khí chính xác",
+      "loHang": "B4-1",
+      "dienTich": 15374,
+      "dienThoai": "(0086) 18506734278",
+      "height": 18,
+      "polygon": [
+        [
+          106.55191882649376,
+          11.501977447567107
+        ],
+        [
+          106.55292397350624,
+          11.501977447567107
+        ],
+        [
+          106.55292397350624,
+          11.502737552432894
+        ],
+        [
+          106.55191882649376,
+          11.502737552432894
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH DỆT MAY XIANG FU",
+      "loaiHinh": "Dệt may",
+      "loHang": "A11-5",
+      "dienTich": 13503,
+      "dienThoai": "0857136618",
+      "height": 10,
+      "polygon": [
+        [
+          106.55351491421338,
+          11.514912187504263
+        ],
+        [
+          106.55414608578663,
+          11.514912187504263
+        ],
+        [
+          106.55414608578663,
+          11.515521012495737
+        ],
+        [
+          106.55351491421338,
+          11.515521012495737
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY CỔ PHẦN GIẤY KHẢI HOÀN BÌNH PHƯỚC",
+      "loaiHinh": "Sản xuất giấy",
+      "loHang": "A3-4,5",
+      "dienTich": 24879,
+      "dienThoai": "0918166366",
+      "height": 19,
+      "polygon": [
+        [
+          106.55456743705285,
+          11.521941493966215
+        ],
+        [
+          106.55566716294716,
+          11.521941493966215
+        ],
+        [
+          106.55566716294716,
+          11.522864306033783
+        ],
+        [
+          106.55456743705285,
+          11.522864306033783
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH TAYU STAR",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A3-2,3",
+      "dienTich": 31833,
+      "dienThoai": "+886-4-25222019",
+      "height": 18,
+      "polygon": [
+        [
+          106.55434460571327,
+          11.520288664382102
+        ],
+        [
+          106.55570759428674,
+          11.520288664382102
+        ],
+        [
+          106.55570759428674,
+          11.521342335617897
+        ],
+        [
+          106.55434460571327,
+          11.521342335617897
+        ]
+      ]
+    },
+    {
+      "tenCty": "CTY TNHH LEGEND BP",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A3-10",
+      "dienTich": 6460,
+      "dienThoai": "0978567554",
+      "height": 20,
+      "polygon": [
+        [
+          106.55440778192207,
+          11.527194847072986
+        ],
+        [
+          106.55518421807793,
+          11.527194847072986
+        ],
+        [
+          106.55518421807793,
+          11.527608352927013
+        ],
+        [
+          106.55440778192207,
+          11.527608352927013
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH SHIMER VIỆT NAM",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A3-8,9",
+      "dienTich": 20962,
+      "dienThoai": "0918557278",
+      "height": 11,
+      "polygon": [
+        [
+          106.55445087144683,
+          11.52604483241281
+        ],
+        [
+          106.55529132855317,
+          11.52604483241281
+        ],
+        [
+          106.55529132855317,
+          11.526803167587191
+        ],
+        [
+          106.55445087144683,
+          11.526803167587191
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH TÂN LONG BẢO VIỆT NAM",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A3-7",
+      "dienTich": 12487,
+      "dienThoai": "0274.3715680",
+      "height": 19,
+      "polygon": [
+        [
+          106.55446571008058,
+          11.52438821542584
+        ],
+        [
+          106.55534608991941,
+          11.52438821542584
+        ],
+        [
+          106.55534608991941,
+          11.525016984574158
+        ],
+        [
+          106.55446571008058,
+          11.525016984574158
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH ZHENG FENG",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A3-6",
+      "dienTich": 12371,
+      "dienThoai": "0272 3644 711",
+      "height": 19,
+      "polygon": [
+        [
+          106.55453011168619,
+          11.52333676057779
+        ],
+        [
+          106.5554104883138,
+          11.52333676057779
+        ],
+        [
+          106.5554104883138,
+          11.524018439422209
+        ],
+        [
+          106.55453011168619,
+          11.524018439422209
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH GIẤY A.F.C BÌNH PHƯỚC",
+      "loaiHinh": "Sản xuất giấy",
+      "loHang": "A5-1,2",
+      "dienTich": 42713,
+      "dienThoai": "0913694541",
+      "height": 12,
+      "polygon": [
+        [
+          106.55876957568158,
+          11.522997215763228
+        ],
+        [
+          106.56023082431842,
+          11.522997215763228
+        ],
+        [
+          106.56023082431842,
+          11.524192384236772
+        ],
+        [
+          106.55876957568158,
+          11.524192384236772
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY CỔ PHẦN NAM LONG MINH HƯNG",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A5-3~10",
+      "dienTich": 81554,
+      "dienThoai": "0913724988",
+      "height": 16,
+      "polygon": [
+        [
+          106.55855193317598,
+          11.525461721696189
+        ],
+        [
+          106.56024566682402,
+          11.525461721696189
+        ],
+        [
+          106.56024566682402,
+          11.52695467830381
+        ],
+        [
+          106.55855193317598,
+          11.52695467830381
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH PINGFU HOME PRODUCTS",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A4",
+      "dienTich": 136847,
+      "dienThoai": "001-6786021489",
+      "height": 11,
+      "polygon": [
+        [
+          106.55724482296894,
+          11.52226111734323
+        ],
+        [
+          106.55849457703106,
+          11.52226111734323
+        ],
+        [
+          106.55849457703106,
+          11.52348568265677
+        ],
+        [
+          106.55724482296894,
+          11.52348568265677
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH FENG YI",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A8-6,7",
+      "dienTich": 25071,
+      "dienThoai": "0918095478",
+      "height": 14,
+      "polygon": [
+        [
+          106.55641847939266,
+          11.521283556000672
+        ],
+        [
+          106.55746532060734,
+          11.521283556000672
+        ],
+        [
+          106.55746532060734,
+          11.522184043999328
+        ],
+        [
+          106.55641847939266,
+          11.522184043999328
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY CỔ PHẦN GIẤY KHẢI HOÀN BÌNH PHƯỚC",
+      "loaiHinh": "Sản xuất giấy",
+      "loHang": "A3-4,5",
+      "dienTich": 24879,
+      "dienThoai": "0918166366",
+      "height": 18,
+      "polygon": [
+        [
+          106.55648278166352,
+          11.520027164061897
+        ],
+        [
+          106.55752961833649,
+          11.520027164061897
+        ],
+        [
+          106.55752961833649,
+          11.521001435938103
+        ],
+        [
+          106.55648278166352,
+          11.521001435938103
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH AID CABINETRY",
+      "loaiHinh": "Nội thất",
+      "loHang": "A8-1~12",
+      "dienTich": 72860,
+      "dienThoai": "+84 274365720",
+      "height": 9,
+      "polygon": [
+        [
+          106.5564341353354,
+          11.517864179862757
+        ],
+        [
+          106.5580504646646,
+          11.517864179862757
+        ],
+        [
+          106.5580504646646,
+          11.519422020137243
+        ],
+        [
+          106.5564341353354,
+          11.519422020137243
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH VIỆT NAM WEALTHY BEST",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A22",
+      "dienTich": 48659,
+      "dienThoai": "0938202155",
+      "height": 10,
+      "polygon": [
+        [
+          106.55879728011216,
+          11.521269674821607
+        ],
+        [
+          106.56025851988785,
+          11.521269674821607
+        ],
+        [
+          106.56025851988785,
+          11.522511325178392
+        ],
+        [
+          106.55879728011216,
+          11.522511325178392
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH VIỆT NAM WELLGAIN INDUSTRIAL (GLOBAL STATE LLC)",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A23",
+      "dienTich": 48297,
+      "dienThoai": "0933127168",
+      "height": 20,
+      "polygon": [
+        [
+          106.55898341617616,
+          11.519493917757462
+        ],
+        [
+          106.56048018382383,
+          11.519493917757462
+        ],
+        [
+          106.56048018382383,
+          11.520818082242538
+        ],
+        [
+          106.55898341617616,
+          11.520818082242538
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH VIỆT NAM ERAWIN TEXTILE (GLOBAL STATE LLC)",
+      "loaiHinh": "Dệt may",
+      "loHang": "A21",
+      "dienTich": 47086,
+      "dienThoai": "0933127168",
+      "height": 19,
+      "polygon": [
+        [
+          106.5601088199708,
+          11.516698726455372
+        ],
+        [
+          106.5613609800292,
+          11.516698726455372
+        ],
+        [
+          106.5613609800292,
+          11.517925673544626
+        ],
+        [
+          106.5601088199708,
+          11.517925673544626
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH AMBER BUILDING VIỆT NAM",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A15",
+      "dienTich": 11779,
+      "dienThoai": "0347199242",
+      "height": 18,
+      "polygon": [
+        [
+          106.55891104850744,
+          11.515999260126254
+        ],
+        [
+          106.55995215149255,
+          11.515999260126254
+        ],
+        [
+          106.55995215149255,
+          11.516561539873745
+        ],
+        [
+          106.55891104850744,
+          11.516561539873745
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY CỔ PHẦN QH PACKAGING",
+      "loaiHinh": "Bao bì",
+      "loHang": "A15-9",
+      "dienTich": 22910,
+      "dienThoai": "0909077722",
+      "height": 17,
+      "polygon": [
+        [
+          106.56009979691166,
+          11.515442774406345
+        ],
+        [
+          106.56117740308835,
+          11.515442774406345
+        ],
+        [
+          106.56117740308835,
+          11.516266425593656
+        ],
+        [
+          106.56009979691166,
+          11.516266425593656
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY CỔ PHẦN ĐẦU TƯ THƯƠNG MẠI GTS BÌNH PHƯỚC",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A14-1",
+      "dienTich": 24210,
+      "dienThoai": "0986008388",
+      "height": 14,
+      "polygon": [
+        [
+          106.55936767760002,
+          11.513876149985036
+        ],
+        [
+          106.56078292239997,
+          11.513876149985036
+        ],
+        [
+          106.56078292239997,
+          11.514721250014963
+        ],
+        [
+          106.55936767760002,
+          11.514721250014963
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH DDK INTERNATIONAL VIỆT NAM",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A19",
+      "dienTich": 82549,
+      "dienThoai": "02743729199",
+      "height": 17,
+      "polygon": [
+        [
+          106.56162925466974,
+          11.526618672314877
+        ],
+        [
+          106.56286054533025,
+          11.526618672314877
+        ],
+        [
+          106.56286054533025,
+          11.527825127685125
+        ],
+        [
+          106.56162925466974,
+          11.527825127685125
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY CỔ PHẦN THƯƠNG MẠI VÀ CÔNG NGHIỆP BOSS",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A20",
+      "dienTich": 82256,
+      "dienThoai": "0934462008",
+      "height": 18,
+      "polygon": [
+        [
+          106.56174416241488,
+          11.52368967776454
+        ],
+        [
+          106.5635830375851,
+          11.52368967776454
+        ],
+        [
+          106.5635830375851,
+          11.52545872223546
+        ],
+        [
+          106.56174416241488,
+          11.52545872223546
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH DỆT SUCCESS LOYAL VIỆT NAM",
+      "loaiHinh": "Dệt may",
+      "loHang": "A11",
+      "dienTich": 16147,
+      "dienThoai": "",
+      "height": 12,
+      "polygon": [
+        [
+          106.55295391476298,
+          11.51441756641183
+        ],
+        [
+          106.55358508523702,
+          11.51441756641183
+        ],
+        [
+          106.55358508523702,
+          11.51503603358817
+        ],
+        [
+          106.55295391476298,
+          11.51503603358817
+        ]
+      ]
+    },
+    {
+      "tenCty": "HONGKONG JINYI FIBRE CO.,LIMITED",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A21",
+      "dienTich": 24864,
+      "dienThoai": "",
+      "height": 9,
+      "polygon": [
+        [
+          106.55204966331794,
+          11.516397879917252
+        ],
+        [
+          106.55304093668207,
+          11.516397879917252
+        ],
+        [
+          106.55304093668207,
+          11.51728192008275
+        ],
+        [
+          106.55204966331794,
+          11.51728192008275
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH NGŨ KIM YOUDE VIỆT NAM",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A10",
+      "dienTich": 177452,
+      "dienThoai": "0356272539",
+      "height": 11,
+      "polygon": [
+        [
+          106.5612710317074,
+          11.517996786926494
+        ],
+        [
+          106.56308376829259,
+          11.517996786926494
+        ],
+        [
+          106.56308376829259,
+          11.519773013073506
+        ],
+        [
+          106.5612710317074,
+          11.519773013073506
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH THƯƠNG MẠI VECI",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A12",
+      "dienTich": 13304,
+      "dienThoai": "",
+      "height": 11,
+      "polygon": [
+        [
+          106.55297924718026,
+          11.515621314287417
+        ],
+        [
+          106.55359195281973,
+          11.515621314287417
+        ],
+        [
+          106.55359195281973,
+          11.516221685712582
+        ],
+        [
+          106.55297924718026,
+          11.516221685712582
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH SẢN XUẤT CÔNG NGHIỆP GIA KHANG",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A13",
+      "dienTich": 28000,
+      "dienThoai": "",
+      "height": 14,
+      "polygon": [
+        [
+          106.56463297396739,
+          11.508952629232462
+        ],
+        [
+          106.56576462603262,
+          11.508952629232462
+        ],
+        [
+          106.56576462603262,
+          11.509938970767537
+        ],
+        [
+          106.56463297396739,
+          11.509938970767537
+        ]
+      ]
+    }
+  ],
+  "trees": [
+    {
+      "soHieu": "KH-001",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 7,
+      "duongKinh": 3,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5543249,
+      "lat": 11.5277393
+    },
+    {
+      "soHieu": "KH-002",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 8,
+      "duongKinh": 2,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5542412,
+      "lat": 11.526625
+    },
+    {
+      "soHieu": "KH-003",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 6,
+      "duongKinh": 2.9,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.554201,
+      "lat": 11.5236816
+    },
+    {
+      "soHieu": "KH-004",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 6,
+      "duongKinh": 3.1,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5538761,
+      "lat": 11.5197807
+    },
+    {
+      "soHieu": "KH-005",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 6,
+      "duongKinh": 2.9,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5524316,
+      "lat": 11.5183692
+    },
+    {
+      "soHieu": "KH-006",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 6,
+      "duongKinh": 1.6,
+      "namTrong": 2019,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5515395,
+      "lat": 11.517203
+    },
+    {
+      "soHieu": "KH-007",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 9,
+      "duongKinh": 1.6,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5512662,
+      "lat": 11.5164404
+    },
+    {
+      "soHieu": "KH-008",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 5,
+      "duongKinh": 1.8,
+      "namTrong": 2020,
+      "trangThai": "Bình thường",
+      "lon": 106.5490965,
+      "lat": 11.5122335
+    },
+    {
+      "soHieu": "KH-009",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 6,
+      "duongKinh": 2.6,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5507159,
+      "lat": 11.5115767
+    },
+    {
+      "soHieu": "KH-010",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 5,
+      "duongKinh": 2.6,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5510848,
+      "lat": 11.5106291
+    },
+    {
+      "soHieu": "KH-011",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 6,
+      "duongKinh": 3.3,
+      "namTrong": 2020,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5505118,
+      "lat": 11.5098735
+    },
+    {
+      "soHieu": "KH-012",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 9,
+      "duongKinh": 3.3,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5485529,
+      "lat": 11.507532
+    },
+    {
+      "soHieu": "KH-013",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 6,
+      "duongKinh": 2.1,
+      "namTrong": 2019,
+      "trangThai": "Bình thường",
+      "lon": 106.5477863,
+      "lat": 11.5063607
+    },
+    {
+      "soHieu": "KH-014",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 7,
+      "duongKinh": 2.3,
+      "namTrong": 2020,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5496742,
+      "lat": 11.5043465
+    },
+    {
+      "soHieu": "KH-015",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 5,
+      "duongKinh": 2.5,
+      "namTrong": 2019,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5611237,
+      "lat": 11.4934492
+    },
+    {
+      "soHieu": "KH-016",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 8,
+      "duongKinh": 2.3,
+      "namTrong": 2022,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5722432,
+      "lat": 11.4945785
+    },
+    {
+      "soHieu": "KH-017",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 8,
+      "duongKinh": 2.8,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5723206,
+      "lat": 11.5023594
+    },
+    {
+      "soHieu": "KH-018",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 8,
+      "duongKinh": 1.5,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5723933,
+      "lat": 11.5065016
+    },
+    {
+      "soHieu": "KH-019",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 7,
+      "duongKinh": 2.2,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5712212,
+      "lat": 11.5067002
+    },
+    {
+      "soHieu": "KH-020",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 8,
+      "duongKinh": 2.6,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5702493,
+      "lat": 11.5069935
+    },
+    {
+      "soHieu": "KH-021",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 6,
+      "duongKinh": 2.3,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5696786,
+      "lat": 11.5074467
+    },
+    {
+      "soHieu": "KH-022",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 9,
+      "duongKinh": 2.8,
+      "namTrong": 2019,
+      "trangThai": "Bình thường",
+      "lon": 106.5689514,
+      "lat": 11.5080856
+    },
+    {
+      "soHieu": "KH-023",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 8,
+      "duongKinh": 3.1,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5683442,
+      "lat": 11.5086056
+    },
+    {
+      "soHieu": "KH-024",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 5,
+      "duongKinh": 1.6,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5680619,
+      "lat": 11.5098349
+    },
+    {
+      "soHieu": "KH-025",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 5,
+      "duongKinh": 2.3,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5677918,
+      "lat": 11.5109297
+    },
+    {
+      "soHieu": "KH-026",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 9,
+      "duongKinh": 3.2,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5693228,
+      "lat": 11.5127983
+    },
+    {
+      "soHieu": "KH-027",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 8,
+      "duongKinh": 1.9,
+      "namTrong": 2021,
+      "trangThai": "Bình thường",
+      "lon": 106.5686083,
+      "lat": 11.5136741
+    },
+    {
+      "soHieu": "KH-028",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 8,
+      "duongKinh": 3.3,
+      "namTrong": 2019,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5685286,
+      "lat": 11.5145188
+    },
+    {
+      "soHieu": "KH-029",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 5,
+      "duongKinh": 1.9,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5680877,
+      "lat": 11.516375
+    },
+    {
+      "soHieu": "KH-030",
+      "tenLoai": "Cây Kèn Hồng",
+      "chieuCao": 5,
+      "duongKinh": 1.6,
+      "namTrong": 2020,
+      "trangThai": "Bình thường",
+      "lon": 106.5581285,
+      "lat": 11.529943
+    },
+    {
+      "soHieu": "TBV-001",
+      "tenLoai": "Cây Tràm Bông Vàng",
+      "chieuCao": 8,
+      "duongKinh": 2.5,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5551,
+      "lat": 11.5222
+    },
+    {
+      "soHieu": "TBV-002",
+      "tenLoai": "Cây Tràm Bông Vàng",
+      "chieuCao": 7,
+      "duongKinh": 2.1,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5563,
+      "lat": 11.5238
+    },
+    {
+      "soHieu": "TBV-003",
+      "tenLoai": "Cây Tràm Bông Vàng",
+      "chieuCao": 9,
+      "duongKinh": 3,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5576,
+      "lat": 11.5215
+    },
+    {
+      "soHieu": "TBV-004",
+      "tenLoai": "Cây Tràm Bông Vàng",
+      "chieuCao": 6,
+      "duongKinh": 2.2,
+      "namTrong": 2022,
+      "trangThai": "Bình thường",
+      "lon": 106.5589,
+      "lat": 11.5201
+    },
+    {
+      "soHieu": "TBV-005",
+      "tenLoai": "Cây Tràm Bông Vàng",
+      "chieuCao": 7,
+      "duongKinh": 2.8,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.554,
+      "lat": 11.5248
+    },
+    {
+      "soHieu": "TBV-006",
+      "tenLoai": "Cây Tràm Bông Vàng",
+      "chieuCao": 8,
+      "duongKinh": 3.2,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5557,
+      "lat": 11.5195
+    },
+    {
+      "soHieu": "TBV-007",
+      "tenLoai": "Cây Tràm Bông Vàng",
+      "chieuCao": 6,
+      "duongKinh": 1.8,
+      "namTrong": 2021,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5571,
+      "lat": 11.5178
+    },
+    {
+      "soHieu": "TBV-008",
+      "tenLoai": "Cây Tràm Bông Vàng",
+      "chieuCao": 9,
+      "duongKinh": 2.6,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5583,
+      "lat": 11.5241
+    },
+    {
+      "soHieu": "TBV-009",
+      "tenLoai": "Cây Tràm Bông Vàng",
+      "chieuCao": 5,
+      "duongKinh": 1.9,
+      "namTrong": 2022,
+      "trangThai": "Bình thường",
+      "lon": 106.5544,
+      "lat": 11.5261
+    },
+    {
+      "soHieu": "TBV-010",
+      "tenLoai": "Cây Tràm Bông Vàng",
+      "chieuCao": 7,
+      "duongKinh": 2.4,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5599,
+      "lat": 11.5188
+    },
+    {
+      "soHieu": "CD-001",
+      "tenLoai": "Cây Dầu",
+      "chieuCao": 12,
+      "duongKinh": 4.5,
+      "namTrong": 2015,
+      "trangThai": "Tốt",
+      "lon": 106.5493,
+      "lat": 11.5133
+    },
+    {
+      "soHieu": "CD-002",
+      "tenLoai": "Cây Dầu",
+      "chieuCao": 14,
+      "duongKinh": 5.2,
+      "namTrong": 2014,
+      "trangThai": "Tốt",
+      "lon": 106.5508,
+      "lat": 11.5148
+    },
+    {
+      "soHieu": "CD-003",
+      "tenLoai": "Cây Dầu",
+      "chieuCao": 11,
+      "duongKinh": 4,
+      "namTrong": 2016,
+      "trangThai": "Tốt",
+      "lon": 106.5522,
+      "lat": 11.5162
+    },
+    {
+      "soHieu": "CD-004",
+      "tenLoai": "Cây Dầu",
+      "chieuCao": 13,
+      "duongKinh": 4.8,
+      "namTrong": 2015,
+      "trangThai": "Bình thường",
+      "lon": 106.5536,
+      "lat": 11.5155
+    },
+    {
+      "soHieu": "CD-005",
+      "tenLoai": "Cây Dầu",
+      "chieuCao": 10,
+      "duongKinh": 3.5,
+      "namTrong": 2017,
+      "trangThai": "Tốt",
+      "lon": 106.5503,
+      "lat": 11.5118
+    },
+    {
+      "soHieu": "CD-006",
+      "tenLoai": "Cây Dầu",
+      "chieuCao": 15,
+      "duongKinh": 5.5,
+      "namTrong": 2013,
+      "trangThai": "Tốt",
+      "lon": 106.5519,
+      "lat": 11.5138
+    },
+    {
+      "soHieu": "CD-007",
+      "tenLoai": "Cây Dầu",
+      "chieuCao": 12,
+      "duongKinh": 4.2,
+      "namTrong": 2016,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5531,
+      "lat": 11.5127
+    },
+    {
+      "soHieu": "CD-008",
+      "tenLoai": "Cây Dầu",
+      "chieuCao": 11,
+      "duongKinh": 3.8,
+      "namTrong": 2017,
+      "trangThai": "Tốt",
+      "lon": 106.5547,
+      "lat": 11.5142
+    },
+    {
+      "soHieu": "CD-009",
+      "tenLoai": "Cây Dầu",
+      "chieuCao": 13,
+      "duongKinh": 4.6,
+      "namTrong": 2015,
+      "trangThai": "Tốt",
+      "lon": 106.5487,
+      "lat": 11.5121
+    },
+    {
+      "soHieu": "CD-010",
+      "tenLoai": "Cây Dầu",
+      "chieuCao": 10,
+      "duongKinh": 3.3,
+      "namTrong": 2018,
+      "trangThai": "Bình thường",
+      "lon": 106.5514,
+      "lat": 11.5165
+    },
+    {
+      "soHieu": "BL-001",
+      "tenLoai": "Cây Bàng Lăng",
+      "chieuCao": 9,
+      "duongKinh": 3,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.565,
+      "lat": 11.5088
+    },
+    {
+      "soHieu": "BL-002",
+      "tenLoai": "Cây Bàng Lăng",
+      "chieuCao": 8,
+      "duongKinh": 2.5,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5663,
+      "lat": 11.5102
+    },
+    {
+      "soHieu": "BL-003",
+      "tenLoai": "Cây Bàng Lăng",
+      "chieuCao": 7,
+      "duongKinh": 2.2,
+      "namTrong": 2022,
+      "trangThai": "Bình thường",
+      "lon": 106.5641,
+      "lat": 11.5115
+    },
+    {
+      "soHieu": "BL-004",
+      "tenLoai": "Cây Bàng Lăng",
+      "chieuCao": 10,
+      "duongKinh": 3.5,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5676,
+      "lat": 11.5078
+    },
+    {
+      "soHieu": "BL-005",
+      "tenLoai": "Cây Bàng Lăng",
+      "chieuCao": 8,
+      "duongKinh": 2.8,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5659,
+      "lat": 11.5129
+    },
+    {
+      "soHieu": "BL-006",
+      "tenLoai": "Cây Bàng Lăng",
+      "chieuCao": 9,
+      "duongKinh": 3.1,
+      "namTrong": 2019,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5648,
+      "lat": 11.5062
+    },
+    {
+      "soHieu": "BL-007",
+      "tenLoai": "Cây Bàng Lăng",
+      "chieuCao": 7,
+      "duongKinh": 2.4,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.567,
+      "lat": 11.5143
+    },
+    {
+      "soHieu": "BL-008",
+      "tenLoai": "Cây Bàng Lăng",
+      "chieuCao": 8,
+      "duongKinh": 2.6,
+      "namTrong": 2020,
+      "trangThai": "Bình thường",
+      "lon": 106.5637,
+      "lat": 11.5097
+    },
+    {
+      "soHieu": "CV-001",
+      "tenLoai": "Cây Viết",
+      "chieuCao": 7,
+      "duongKinh": 2,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5499,
+      "lat": 11.4996
+    },
+    {
+      "soHieu": "CV-002",
+      "tenLoai": "Cây Viết",
+      "chieuCao": 6,
+      "duongKinh": 1.8,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5513,
+      "lat": 11.5009
+    },
+    {
+      "soHieu": "CV-003",
+      "tenLoai": "Cây Viết",
+      "chieuCao": 8,
+      "duongKinh": 2.4,
+      "namTrong": 2020,
+      "trangThai": "Bình thường",
+      "lon": 106.5526,
+      "lat": 11.4982
+    },
+    {
+      "soHieu": "CV-004",
+      "tenLoai": "Cây Viết",
+      "chieuCao": 7,
+      "duongKinh": 2.1,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5538,
+      "lat": 11.4996
+    },
+    {
+      "soHieu": "CV-005",
+      "tenLoai": "Cây Viết",
+      "chieuCao": 5,
+      "duongKinh": 1.5,
+      "namTrong": 2022,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5516,
+      "lat": 11.497
+    },
+    {
+      "soHieu": "CV-006",
+      "tenLoai": "Cây Viết",
+      "chieuCao": 9,
+      "duongKinh": 2.8,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5503,
+      "lat": 11.5022
+    },
+    {
+      "soHieu": "CV-007",
+      "tenLoai": "Cây Viết",
+      "chieuCao": 6,
+      "duongKinh": 2,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5527,
+      "lat": 11.5011
+    },
+    {
+      "soHieu": "CV-008",
+      "tenLoai": "Cây Viết",
+      "chieuCao": 8,
+      "duongKinh": 2.5,
+      "namTrong": 2020,
+      "trangThai": "Bình thường",
+      "lon": 106.5541,
+      "lat": 11.4985
+    },
+    {
+      "soHieu": "BDL-001",
+      "tenLoai": "Cây Bàng Đài Loan",
+      "chieuCao": 8,
+      "duongKinh": 3.2,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.563,
+      "lat": 11.5052
+    },
+    {
+      "soHieu": "BDL-002",
+      "tenLoai": "Cây Bàng Đài Loan",
+      "chieuCao": 9,
+      "duongKinh": 3.5,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5618,
+      "lat": 11.5065
+    },
+    {
+      "soHieu": "BDL-003",
+      "tenLoai": "Cây Bàng Đài Loan",
+      "chieuCao": 7,
+      "duongKinh": 2.8,
+      "namTrong": 2021,
+      "trangThai": "Bình thường",
+      "lon": 106.5642,
+      "lat": 11.5038
+    },
+    {
+      "soHieu": "BDL-004",
+      "tenLoai": "Cây Bàng Đài Loan",
+      "chieuCao": 10,
+      "duongKinh": 4,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5625,
+      "lat": 11.5078
+    },
+    {
+      "soHieu": "BDL-005",
+      "tenLoai": "Cây Bàng Đài Loan",
+      "chieuCao": 8,
+      "duongKinh": 3,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.561,
+      "lat": 11.5041
+    },
+    {
+      "soHieu": "BDL-006",
+      "tenLoai": "Cây Bàng Đài Loan",
+      "chieuCao": 6,
+      "duongKinh": 2.2,
+      "namTrong": 2022,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5637,
+      "lat": 11.5092
+    },
+    {
+      "soHieu": "BDL-007",
+      "tenLoai": "Cây Bàng Đài Loan",
+      "chieuCao": 9,
+      "duongKinh": 3.4,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5621,
+      "lat": 11.5098
+    },
+    {
+      "soHieu": "BDL-008",
+      "tenLoai": "Cây Bàng Đài Loan",
+      "chieuCao": 7,
+      "duongKinh": 2.6,
+      "namTrong": 2021,
+      "trangThai": "Bình thường",
+      "lon": 106.5608,
+      "lat": 11.5079
+    },
+    {
+      "soHieu": "OS-001",
+      "tenLoai": "Cây Osaka",
+      "chieuCao": 6,
+      "duongKinh": 2,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5696,
+      "lat": 11.5175
+    },
+    {
+      "soHieu": "OS-002",
+      "tenLoai": "Cây Osaka",
+      "chieuCao": 7,
+      "duongKinh": 2.3,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5709,
+      "lat": 11.5162
+    },
+    {
+      "soHieu": "OS-003",
+      "tenLoai": "Cây Osaka",
+      "chieuCao": 5,
+      "duongKinh": 1.8,
+      "namTrong": 2022,
+      "trangThai": "Bình thường",
+      "lon": 106.5683,
+      "lat": 11.5189
+    },
+    {
+      "soHieu": "OS-004",
+      "tenLoai": "Cây Osaka",
+      "chieuCao": 8,
+      "duongKinh": 2.6,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5702,
+      "lat": 11.5196
+    },
+    {
+      "soHieu": "OS-005",
+      "tenLoai": "Cây Osaka",
+      "chieuCao": 6,
+      "duongKinh": 2.1,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5716,
+      "lat": 11.5181
+    },
+    {
+      "soHieu": "OS-006",
+      "tenLoai": "Cây Osaka",
+      "chieuCao": 7,
+      "duongKinh": 2.4,
+      "namTrong": 2021,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5689,
+      "lat": 11.5204
+    },
+    {
+      "soHieu": "OS-007",
+      "tenLoai": "Cây Osaka",
+      "chieuCao": 9,
+      "duongKinh": 3,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5705,
+      "lat": 11.5148
+    },
+    {
+      "soHieu": "OS-008",
+      "tenLoai": "Cây Osaka",
+      "chieuCao": 5,
+      "duongKinh": 1.7,
+      "namTrong": 2023,
+      "trangThai": "Bình thường",
+      "lon": 106.572,
+      "lat": 11.5168
+    }
+  ],
+  "deleted": [
+    "CÔNG TY TNHH HAOHUA (VIỆT NAM) DV3",
+    "CÔNG TY TNHH HAOHUA (VIỆT NAM)"
+  ]
+}

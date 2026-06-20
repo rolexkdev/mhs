@@ -27,6 +27,258 @@ body { font-family:system-ui,Segoe UI,sans-serif; }
 .map-tooltip { background:rgba(0,0,0,.78); color:#fff; border:none; border-radius:4px; font-size:12px; font-weight:600; padding:4px 8px; box-shadow:0 2px 6px rgba(0,0,0,.4); white-space:nowrap; }
 .map-tooltip::before { display:none; }
 
+/* ── Pick-coordinate button & panel (3D mode) ────────────── */
+#pick-btn {
+  position: absolute;
+  bottom: 30px;
+  left: 12px;
+  z-index: 1000;
+  background: #1565c0;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+  transition: background .15s;
+}
+#pick-btn:hover  { background: #0d47a1; }
+#pick-btn.active { background: #c62828; }
+
+#pick-panel {
+  position: absolute;
+  right: 12px;
+  bottom: 30px;
+  z-index: 1000;
+  width: 290px;
+  background: rgba(255,255,255,0.97);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.3);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: system-ui, sans-serif;
+}
+.pp-header {
+  background: #1565c0;
+  color: #fff;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pp-header button {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  padding: 0 2px;
+  opacity: .8;
+}
+.pp-header button:hover { opacity: 1; }
+.pp-cursor {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px 4px;
+  color: #1565c0;
+  font-family: monospace;
+  min-height: 30px;
+}
+.pp-hint {
+  font-size: 11px;
+  color: #888;
+  padding: 0 14px 8px;
+  border-bottom: 1px solid #eee;
+}
+.pp-list {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+.pp-empty { padding: 10px 14px; font-size: 12px; color: #aaa; }
+.pp-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  font-size: 12px;
+}
+.pp-row:nth-child(even) { background: #f5f5f5; }
+.pp-idx {
+  width: 18px;
+  height: 18px;
+  background: #1565c0;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.pp-coord { flex: 1; font-family: monospace; color: #222; }
+.pp-del {
+  background: none;
+  border: none;
+  color: #bbb;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+  flex-shrink: 0;
+}
+.pp-del:hover { color: #e53935; }
+.pp-actions {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid #eee;
+  flex-shrink: 0;
+}
+.pp-actions button {
+  flex: 1;
+  border: none;
+  padding: 7px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+#pp-copy  { background: #1565c0; color: #fff; }
+#pp-copy:hover  { background: #0d47a1; }
+#pp-clear { background: #f5f5f5; color: #555; }
+#pp-clear:hover { background: #ffebee; color: #c62828; }
+
+/* ── Editor toolbar ──────────────────────────────────────── */
+#ed-toolbar {
+  position: absolute;
+  top: 56px; right: 10px;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.97);
+  padding: 6px 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.3);
+}
+.et-label {
+  font-size: 11px; font-weight: 700;
+  color: #666; text-transform: uppercase;
+  letter-spacing: .5px; padding-right: 4px;
+}
+.et-btn {
+  border: 1px solid #ddd; background: #f8f8f8;
+  color: #333; padding: 6px 12px; border-radius: 7px;
+  font-size: 12.5px; font-weight: 600; cursor: pointer;
+  transition: background .12s, color .12s;
+  white-space: nowrap;
+}
+.et-btn:hover { background: #e3f2fd; border-color: #90caf9; color: #1565c0; }
+.et-btn.et-on  { background: #1565c0; color: #fff; border-color: #1565c0; }
+.et-btn.et-on:hover { background: #0d47a1; }
+.et-btn.et-danger { background: #c62828; color: #fff; border-color: #c62828; }
+.et-sep { width: 1px; height: 22px; background: #ddd; margin: 0 2px; }
+
+/* ── Editor hint bar ─────────────────────────────────────── */
+#ed-hint {
+  position: absolute;
+  bottom: 14px; left: 50%; transform: translateX(-50%);
+  z-index: 1000;
+  background: rgba(21,101,192,.93);
+  color: #fff; padding: 8px 18px; border-radius: 20px;
+  font-size: 12.5px; white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  pointer-events: none;
+}
+
+/* ── Editor properties panel ─────────────────────────────── */
+#ed-props {
+  position: absolute;
+  right: 10px; top: 110px;
+  z-index: 1000;
+  width: 240px;
+  background: rgba(255,255,255,0.97);
+  border-radius: 10px;
+  box-shadow: 0 3px 14px rgba(0,0,0,.25);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 13px;
+}
+.ep-name {
+  background: #1565c0; color: #fff;
+  padding: 10px 14px; font-weight: 700;
+  font-size: 12.5px; line-height: 1.3;
+}
+#ed-props label {
+  display: flex; flex-direction: column;
+  padding: 8px 14px 0; font-size: 11.5px;
+  color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: .3px;
+}
+#ed-props input, #ed-props select {
+  margin-top: 4px; padding: 6px 8px;
+  border: 1px solid #ddd; border-radius: 6px;
+  font-size: 13px; color: #222;
+  background: #fafafa;
+}
+.ep-btns {
+  display: flex; gap: 8px; padding: 12px 14px;
+}
+.ep-btns button {
+  flex: 1; padding: 7px; border: none;
+  border-radius: 7px; cursor: pointer;
+  font-size: 13px; font-weight: 600;
+}
+#ep-apply   { background: #1565c0; color: #fff; }
+#ep-apply:hover { background: #0d47a1; }
+.ep-del-btn { background: #fce4e4; color: #c62828; }
+.ep-del-btn:hover { background: #c62828; color: #fff; }
+
+/* ── Draw modal ──────────────────────────────────────────── */
+#draw-modal {
+  position: absolute; inset: 0;
+  z-index: 2000;
+  background: rgba(0,0,0,.45);
+  display: none; align-items: center; justify-content: center;
+}
+.dm-box {
+  background: #fff; border-radius: 12px;
+  padding: 24px; width: 320px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.35);
+  display: flex; flex-direction: column; gap: 12px;
+}
+.dm-title {
+  font-size: 16px; font-weight: 800;
+  color: #1565c0; margin-bottom: 4px;
+}
+.dm-box label {
+  display: flex; flex-direction: column;
+  font-size: 11.5px; color: #666;
+  font-weight: 700; text-transform: uppercase; letter-spacing: .3px;
+}
+.dm-box input, .dm-box select {
+  margin-top: 5px; padding: 8px 10px;
+  border: 1px solid #ddd; border-radius: 7px;
+  font-size: 13.5px;
+}
+.dm-btns { display: flex; gap: 10px; margin-top: 4px; }
+.dm-btns button {
+  flex: 1; padding: 10px; border: none;
+  border-radius: 8px; cursor: pointer;
+  font-size: 13.5px; font-weight: 700;
+}
+#dm-ok     { background: #1565c0; color: #fff; }
+#dm-ok:hover { background: #0d47a1; }
+#dm-cancel { background: #f0f0f0; color: #555; }
+#dm-cancel:hover { background: #ddd; }
+
 /* ── Tree panel (3D mode) ─────────────────────────────────── */
 #tree-panel {
   position: absolute;
