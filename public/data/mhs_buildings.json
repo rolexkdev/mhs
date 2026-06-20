@@ -1,5 +1,20 @@
 {
-  "buildings": [],
+  "buildings": [
+    {
+      "tenCty": "CÔNG TY TNHH DDK INTERNATIONAL VIỆT NAM",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A19",
+      "dienTich": 82549,
+      "dienThoai": "02743729199",
+      "height": 18,
+      "polygon": [
+        [106.5608343, 11.5280812],
+        [106.5637582, 11.5282895],
+        [106.5641481, 11.5233680],
+        [106.5612418, 11.5231264]
+      ]
+    }
+  ],
   "trees": [
     {
       "soHieu": "SD-001",
