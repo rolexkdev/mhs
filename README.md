@@ -1,4 +1,4 @@
-# KCN Dầu Giây — clone (Vite)
+# KCN Minh Hưng Sikico
 
 Clone bản đồ KCN Dầu Giây: **4 page 2D** (Leaflet) + **1 page 3D** (CesiumJS).
 Không dùng ArcGIS JS API — chỉ là thư viện mã nguồn mở đọc dữ liệu GeoJSON / Scene Layer.
