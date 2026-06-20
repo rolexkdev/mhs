@@ -5,7 +5,7 @@
     "": {
       "name": "kcn-daugiay-clone",
       "dependencies": {
-        "cesium": "^1.123.0",
+        "cesium": "^1.142.0",
         "chart.js": "^4.4.1",
         "leaflet": "^1.9.4",
       },

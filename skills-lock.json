@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "cesium-context7": {
+      "source": "cesiumgs/cesium-ai-integrations",
+      "sourceType": "github",
+      "skillPath": "skills/cesium-context7/SKILL.md",
+      "computedHash": "e4869dcd18a9b764c276f6378d3a075199d3a34b5b18b7449eb20660335b2ba4"
+    },
+    "cesiumjs-interaction": {
+      "source": "cesiumgs/cesiumjs-skills",
+      "sourceType": "github",
+      "skillPath": "skills/cesiumjs-interaction/SKILL.md",
+      "computedHash": "ddc7ad375e2b62779f1b5d6da30a53946f0d29cfd19b31f2521700de4b3725b3"
+    },
+    "cesiumjs-primitives": {
+      "source": "cesiumgs/cesiumjs-skills",
+      "sourceType": "github",
+      "skillPath": "skills/cesiumjs-primitives/SKILL.md",
+      "computedHash": "0818daae8f203a2d0b0aa2ce50b5ad3777722bdf1e9b244e9ea5bb563053c02f"
+    }
+  }
+}

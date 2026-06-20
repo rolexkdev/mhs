@@ -1,19 +1,18 @@
 import * as Cesium from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import { ESRI_TERRAIN, CAMERA_3D } from "./config.js";
+import { addBuilding3D, removeBuilding3D, sampleGroundHeight } from "./building3d.js";
+import { ensureHeights, rebuildTrees, removeTrees, groundHeightOf, pickedTreeId } from "./treelayer.js";
 
 let viewer = null, loaded = false;
 const status = () => document.getElementById("status");
 const LAT_M = 111000;
 
+// Chỉ tập trung 2 loài trước. Mỗi loài có `shape` để treelayer dựng đúng dáng:
+//   cone = cây tán nón (sao đen);  palm = cau vua (thân cao mảnh + tán xòe).
 const TREE_TYPES = {
-  "Cây Kèn Hồng":       { color: "#E8709E", trunkColor: "#5D4037", prefix: "KH"  },
-  "Cây Tràm Bông Vàng":  { color: "#C9A800", trunkColor: "#795548", prefix: "TBV" },
-  "Cây Dầu":             { color: "#3B6B3B", trunkColor: "#3E2723", prefix: "CD"  },
-  "Cây Bàng Lăng":       { color: "#B57BB5", trunkColor: "#6A1B9A", prefix: "BL"  },
-  "Cây Viết":            { color: "#CC5533", trunkColor: "#BF360C", prefix: "CV"  },
-  "Cây Bàng Đài Loan":   { color: "#5A9B5E", trunkColor: "#1B5E20", prefix: "BDL" },
-  "Cây Osaka":           { color: "#D97899", trunkColor: "#880E4F", prefix: "OS"  },
+  "Cây Sao Đen":  { color: "#1B5E20", trunkColor: "#4D3321", prefix: "SD",  shape: "cone" },
+  "Cây Cau Vua":  { color: "#2E7D32", trunkColor: "#9E9E9E", prefix: "CAU", shape: "palm" },
 };
 
 // Companies with surveyed lot-boundary polygons — drawn from actual coordinates
@@ -50,10 +49,13 @@ const ROOF_COLORS = {
 };
 
 let treesData = [];
-let addModeSpecies = null;
-let addHandler = null;
+let addModeSpecies  = null;
+let addHandler      = null;
+let rowModeSpecies  = null;
+let rowStart        = null;
+let rowHandler      = null;
+let rowStartEnt     = null;
 let escListenerAttached = false;
-let treeEntities  = new Map(); // soHieu → [entity, ...]
 let ptBuildings   = new Map(); // tenCty → { props, polygon, h, wall, roof }
 let selTreeKey    = null;
 let treeHndEnt    = null;
@@ -215,54 +217,65 @@ function treeDesc(p) {
   </div>`;
 }
 
-function renderTree(lon, lat, p) {
-  const cfg = TREE_TYPES[p.tenLoai] || { color: "#4E7C4E", trunkColor: "#5D4037" };
-  const h   = p.chieuCao || 6;
-  const key = p.soHieu;
-  const ents = [];
-
-  const seed = (Math.abs(Math.round(lon * 1e5)) * 31337 + Math.abs(Math.round(lat * 1e5)) * 7919) >>> 0;
-  const rng  = n => { const x = Math.sin((seed + n) * 127.1 + 1) * 43758.5453; return x - Math.floor(x); };
-
-  const trunkLen = h * 0.40;
-  const cosLat   = Math.cos(lat * Math.PI / 180);
-
-  const trunk = viewer.entities.add({
-    position: Cesium.Cartesian3.fromDegrees(lon, lat, trunkLen / 2),
-    cylinder: { length: trunkLen, topRadius: 0.13, bottomRadius: 0.30,
-      material: new Cesium.ColorMaterialProperty(Cesium.Color.fromCssColorString(cfg.trunkColor).withAlpha(0.97)),
-      shadows: Cesium.ShadowMode.ENABLED },
-  });
-  trunk._treeKey = key; ents.push(trunk);
-
-  const spread  = Math.max(2.6, h * 0.33);
-  const canopyH = h * 0.62;
-  const color   = Cesium.Color.fromCssColorString(cfg.color);
-  const name    = `${p.tenLoai} — ${p.soHieu}`;
-  const descHtml = treeDesc(p);
-
-  for (let i = 0; i < 8; i++) {
-    const isCenter = i === 0;
-    const angle  = rng(i)      * Math.PI * 2;
-    const dist   = rng(i + 10) * spread * (isCenter ? 0 : 0.72);
-    const offLon = isCenter ? 0 : (dist * Math.cos(angle)) / (LAT_M * cosLat);
-    const offLat = isCenter ? 0 : (dist * Math.sin(angle)) / LAT_M;
-    const offH   = isCenter ? 0 : (rng(i + 20) - 0.38) * h * 0.36;
-    const r      = spread * (isCenter ? 0.88 : (0.52 + rng(i + 30) * 0.34));
-    const e = viewer.entities.add({
-      name, description: descHtml,
-      position: Cesium.Cartesian3.fromDegrees(lon + offLon, lat + offLat, canopyH + offH),
-      ellipsoid: { radii: new Cesium.Cartesian3(r, r, r * 0.80),
-        material: new Cesium.ColorMaterialProperty(color.withAlpha(0.94)),
-        shadows: Cesium.ShadowMode.ENABLED },
-    });
-    e._treeKey = key; ents.push(e);
-  }
-  treeEntities.set(key, ents);
+// nextSoHieu: sinh ID kế tiếp không bị trùng dù đã có xóa
+function nextSoHieu(species) {
+  const prefix = TREE_TYPES[species]?.prefix ?? "XX";
+  const maxNum = treesData.reduce((m, t) => {
+    if (t.tenLoai !== species) return m;
+    const n = parseInt(t.soHieu?.split("-").pop() ?? "0", 10);
+    return n > m ? n : m;
+  }, 0);
+  return `${prefix}-${String(maxNum + 1).padStart(3, "0")}`;
 }
 
-function getTreeCount(species) {
-  return treesData.filter(t => t.tenLoai === species).length;
+// Dựng lại toàn bộ cây trong 1 Primitive batch (1 draw call thay vì N model).
+// Lấy độ cao terrain cho cây mới rồi rebuild; an toàn khi gọi nhiều lần.
+async function rebuildTreeLayer() {
+  if (!viewer) return;
+  await ensureHeights(viewer.scene, treesData);
+  rebuildTrees(viewer.scene, treesData, TREE_TYPES);
+  viewer.scene.requestRender();
+}
+
+// Hiện InfoBox cho 1 cây (click ở chế độ xem). Dùng 1 entity ẩn mang mô tả.
+let treeInfoEnt = null;
+function showTreeInfo(soHieu) {
+  const t = treesData.find((x) => x.soHieu === soHieu);
+  if (!t) return;
+  const pos = Cesium.Cartesian3.fromDegrees(+t.lon, +t.lat, groundHeightOf(t) + (t.chieuCao || 6));
+  if (!treeInfoEnt) {
+    treeInfoEnt = viewer.entities.add({
+      point: { pixelSize: 1, color: Cesium.Color.TRANSPARENT, disableDepthTestDistance: Number.POSITIVE_INFINITY },
+    });
+  }
+  treeInfoEnt.position = new Cesium.ConstantPositionProperty(pos);
+  treeInfoEnt.name = `${t.tenLoai} — ${t.soHieu}`;
+  treeInfoEnt.description = treeDesc(t);
+  viewer.selectedEntity = treeInfoEnt;
+}
+
+// TEST: render 1 cây từ model glb thật để xem thử (model bbox cao 2 đơn vị, gốc ở
+// giữa → base ở Y=-1, nên đặt cao = 1*scale rồi RELATIVE_TO_GROUND để gốc chạm đất).
+let heroTested = false;
+function addHeroTreeTest() {
+  if (heroTested || !viewer) return;
+  heroTested = true;
+  const lon = 106.5605, lat = 11.5299, scale = 8; // ~16 m
+  const e = viewer.entities.add({
+    name: "Cây Cau Vua — model 3D thật (TEST)",
+    description: "<b>Model .glb cau vua</b><br>Render 1 cây để xem thử dáng/màu/kích thước.",
+    position: Cesium.Cartesian3.fromDegrees(lon, lat, scale),
+    model: {
+      uri: "models/cauvua.glb",
+      scale,
+      minimumPixelSize: 64,
+      heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+    },
+  });
+  viewer.flyTo(e, {
+    duration: 2.5,
+    offset: new Cesium.HeadingPitchRange(Cesium.Math.toRadians(25), Cesium.Math.toRadians(-12), 55),
+  }).catch(() => {});
 }
 
 function buildTreePanel() {
@@ -278,32 +291,55 @@ function buildTreePanel() {
   treesData.forEach(t => { if (counts[t.tenLoai] !== undefined) counts[t.tenLoai]++; });
 
   const rows = Object.entries(TREE_TYPES).map(([name, cfg]) => {
-    const cnt = counts[name] || 0;
-    const isActive = addModeSpecies === name;
-    return `<div class="tp-item${isActive ? " tp-item--active" : ""}">
+    const cnt       = counts[name] || 0;
+    const isAdd     = addModeSpecies  === name;
+    const isRow     = rowModeSpecies  === name;
+    const rowActive = rowModeSpecies !== null;
+    return `<div class="tp-item${(isAdd || isRow) ? " tp-item--active" : ""}">
       <span class="tp-dot" style="background:${cfg.color}"></span>
       <span class="tp-name">${name}</span>
       <span class="tp-count">${cnt}</span>
-      <button class="tp-add${isActive ? " tp-add--active" : ""}" data-sp="${name}" title="${isActive ? "Hủy thêm" : "Thêm cây vào bản đồ"}">${isActive ? "✕" : "+"}</button>
+      <button class="tp-row${isRow ? " tp-row--active" : ""}" data-row="${name}"
+        title="${isRow ? "Hủy vẽ hàng" : "Vẽ hàng cây"}">≡</button>
+      <button class="tp-add${isAdd ? " tp-add--active" : ""}" data-sp="${name}"
+        title="${isAdd ? "Hủy thêm" : "Thêm 1 cây"}">${isAdd ? "✕" : "+"}</button>
     </div>`;
   }).join("");
 
+  const footerActive = addModeSpecies || rowModeSpecies;
+  const footerMsg = addModeSpecies
+    ? `🌱 Đang thêm: <b>${addModeSpecies}</b><br><small>Click bản đồ để đặt cây · Esc hủy</small>`
+    : rowModeSpecies
+      ? `📏 Hàng cây: <b>${rowModeSpecies}</b><br><small>${rowStart ? "Click điểm CUỐI · Esc hủy" : "Click điểm ĐẦU hàng · Esc hủy"}</small>`
+      : `<b>+</b> thêm 1 cây &nbsp;·&nbsp; <b>≡</b> vẽ hàng cây`;
+
   panel.innerHTML = `
-    <div class="tp-header">CHÚ GIẢI CÂY XANH</div>
+    <div class="tp-header">
+      CHÚ GIẢI CÂY XANH
+      <button class="tp-clear-btn" title="Xóa tất cả cây">🗑</button>
+    </div>
     <div class="tp-total">Tổng số cây: <b>${total}</b></div>
     <div class="tp-list">${rows}</div>
-    <div class="tp-footer${addModeSpecies ? " tp-footer--active" : ""}">
-      ${addModeSpecies
-        ? `<span>🌱 Đang thêm: <b>${addModeSpecies}</b><br><small>Click trên bản đồ để đặt cây · Esc để hủy</small></span>`
-        : `<span>Nhấn <b>+</b> để thêm cây lên bản đồ</span>`}
+    <div class="tp-footer${footerActive ? " tp-footer--active" : ""}">
+      <span>${footerMsg}</span>
     </div>
   `;
+
+  panel.querySelector(".tp-clear-btn").addEventListener("click", clearAllTrees);
 
   panel.querySelectorAll(".tp-add").forEach(btn => {
     btn.addEventListener("click", () => {
       const sp = btn.dataset.sp;
       if (addModeSpecies === sp) exitAddMode();
       else enterAddMode(sp);
+    });
+  });
+
+  panel.querySelectorAll(".tp-row").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const sp = btn.dataset.row;
+      if (rowModeSpecies === sp) exitRowMode();
+      else enterRowMode(sp);
     });
   });
 }
@@ -326,10 +362,7 @@ function enterAddMode(species) {
     const lon = Cesium.Math.toDegrees(carto.longitude);
     const lat = Cesium.Math.toDegrees(carto.latitude);
 
-    const cfg = TREE_TYPES[species];
-    const count = getTreeCount(species) + 1;
-    const soHieu = `${cfg.prefix}-${String(count).padStart(3, "0")}`;
-
+    const soHieu = nextSoHieu(species);
     const p = {
       soHieu,
       tenLoai: species,
@@ -339,7 +372,8 @@ function enterAddMode(species) {
       trangThai: "Tốt",
     };
     treesData.push({ ...p, lon, lat });
-    renderTree(lon, lat, p);
+    rebuildTreeLayer();
+    saveData();
     exitAddMode();
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
@@ -357,13 +391,14 @@ function exitAddMode() {
 
 // ── Editable polygon buildings ────────────────────────────────
 let polyBuildings = [];
-let polyEntities  = new Map(); // tenCty → { wall, roof }
-let deletedNames  = new Set(); // tên công ty đã xóa — không re-import từ cty.geojson
+// Map<tenCty, { wallPrim, roofPrim, groundH }>  — Primitive-based, not Entity
+let polyEntities  = new Map();
 
 async function loadData() {
+  // trees: null = chưa có trong file (sẽ load từ cay.geojson), [] = đã lưu nhưng không có cây
   const parse = raw => Array.isArray(raw)
-    ? { buildings: raw, trees: [], deleted: [] }
-    : { buildings: raw.buildings || [], trees: raw.trees || [], deleted: raw.deleted || [] };
+    ? { buildings: raw, trees: null }
+    : { buildings: raw.buildings || [], trees: "trees" in raw ? raw.trees : null };
 
   try {
     const r = await fetch("/data/mhs_buildings.json?t=" + Date.now());
@@ -373,7 +408,7 @@ async function loadData() {
     const s = localStorage.getItem("mhs_buildings");
     if (s) return parse(JSON.parse(s));
   } catch (e) {}
-  return { buildings: COMPANY_POLYGONS.map(c => ({ ...c, height: 16 })), trees: [], deleted: [] };
+  return { buildings: COMPANY_POLYGONS.map(c => ({ ...c, height: 16 })), trees: null };
 }
 
 async function saveData() {
@@ -384,7 +419,6 @@ async function saveData() {
     trees: treesData.map(({ soHieu, tenLoai, chieuCao, duongKinh, namTrong, trangThai, lon, lat }) =>
       ({ soHieu, tenLoai, chieuCao, duongKinh, namTrong, trangThai, lon, lat })
     ),
-    deleted: [...deletedNames],
   };
   try {
     const r = await fetch("/api/save", { method: "POST",
@@ -397,70 +431,60 @@ async function saveData() {
 
 function renderPolyBuilding(data) {
   const key = data.tenCty;
+  // Remove old primitives if re-rendering
   const old = polyEntities.get(key);
-  if (old) { viewer.entities.remove(old.wall); viewer.entities.remove(old.roof); }
+  if (old) removeBuilding3D(viewer.scene, old);
 
-  const h = data.height || 16;
-  const coords = data.polygon.flatMap(([lon, lat]) => [lon, lat]);
-  const wallColor = Cesium.Color.fromCssColorString("#F0F0F0").withAlpha(0.93);
-  const roofColor = Cesium.Color.fromCssColorString(ROOF_COLORS[data.loaiHinh] || "#E0E0E0");
+  const wallColor = Cesium.Color.fromCssColorString("#F0F0F0").withAlpha(0.95);
+  const roofColor = Cesium.Color.fromCssColorString(ROOF_COLORS[data.loaiHinh] || "#E0E0E0").withAlpha(0.97);
 
-  const wall = viewer.entities.add({
-    name: data.tenCty, description: desc(data),
-    polygon: {
-      hierarchy: new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray(coords)),
-      height: 0, extrudedHeight: h,
-      material: new Cesium.ColorMaterialProperty(wallColor),
-      outline: true,
-      outlineColor: new Cesium.ConstantProperty(Cesium.Color.fromCssColorString("#757575")),
-      outlineWidth: 2, shadows: Cesium.ShadowMode.ENABLED,
-      closeTop: false, closeBottom: true,
-    },
-  });
-  wall._polyKey = key;
-
-  const roof = viewer.entities.add({
-    polygon: {
-      hierarchy: new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray(coords)),
-      height: h, extrudedHeight: h + 2,
-      material: new Cesium.ColorMaterialProperty(roofColor.withAlpha(0.96)),
-      outline: false, shadows: Cesium.ShadowMode.ENABLED,
-    },
-  });
-  roof._polyKey = key;
-
-  polyEntities.set(key, { wall, roof });
+  // addBuilding3D is async (terrain sampling). We store a sentinel immediately so
+  // double-calls don't race, then update when the promise resolves.
+  polyEntities.set(key, null);
+  addBuilding3D(viewer, {
+    polygon:   data.polygon,
+    height:    data.height || 16,
+    wallColor,
+    roofColor,
+  }).then(result => {
+    polyEntities.set(key, result);
+    // Attach click entity for infobox (invisible billboard at centroid)
+    if (!data._clickEntity) {
+      const [cLon, cLat] = data.polygon.reduce(
+        ([sx, sy], [x, y], _, a) => [sx + x / a.length, sy + y / a.length],
+        [0, 0]
+      );
+      data._clickEntity = viewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(cLon, cLat, (result.groundH || 0) + (data.height || 16) / 2),
+        name: data.tenCty,
+        description: desc(data),
+        point: {
+          pixelSize: 1,
+          color: Cesium.Color.TRANSPARENT,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+      });
+      data._clickEntity._polyKey = key;
+    }
+  }).catch(err => console.error("[renderPolyBuilding]", key, err));
 }
 
 function updatePolyGeometry(idx) {
-  const data = polyBuildings[idx];
-  const ents = polyEntities.get(data.tenCty);
-  if (!ents) { renderPolyBuilding(data); return; }
-  const h = data.height || 16;
-  const coords = data.polygon.flatMap(([lon, lat]) => [lon, lat]);
-  const hier = () => new Cesium.PolygonHierarchy(Cesium.Cartesian3.fromDegreesArray(coords));
-  ents.wall.polygon.hierarchy    = new Cesium.ConstantProperty(hier());
-  ents.wall.polygon.extrudedHeight = new Cesium.ConstantProperty(h);
-  ents.roof.polygon.hierarchy    = new Cesium.ConstantProperty(hier());
-  ents.roof.polygon.height       = new Cesium.ConstantProperty(h);
-  ents.roof.polygon.extrudedHeight = new Cesium.ConstantProperty(h + 2);
-  ents.roof.polygon.material = new Cesium.ColorMaterialProperty(
-    Cesium.Color.fromCssColorString(ROOF_COLORS[data.loaiHinh] || "#E0E0E0").withAlpha(0.96)
-  );
+  // Primitives can't be mutated in-place — re-render from scratch.
+  renderPolyBuilding(polyBuildings[idx]);
 }
 
 function removePolyBuilding(idx) {
   const data = polyBuildings[idx];
-  const ents = polyEntities.get(data.tenCty);
-  if (ents) { viewer.entities.remove(ents.wall); viewer.entities.remove(ents.roof); polyEntities.delete(data.tenCty); }
-  deletedNames.add(data.tenCty);
+  const prim = polyEntities.get(data.tenCty);
+  if (prim) { removeBuilding3D(viewer.scene, prim); polyEntities.delete(data.tenCty); }
+  if (data._clickEntity) { viewer.entities.remove(data._clickEntity); data._clickEntity = null; }
   polyBuildings.splice(idx, 1);
   saveData();
 }
 
-function addAllPolyBuildings(buildings, deleted = []) {
+function addAllPolyBuildings(buildings) {
   polyBuildings = buildings;
-  deleted.forEach(n => deletedNames.add(n));
   for (const data of polyBuildings) {
     if (!data.height) data.height = 16;
     renderPolyBuilding(data);
@@ -469,9 +493,10 @@ function addAllPolyBuildings(buildings, deleted = []) {
 }
 
 // ── Editor ────────────────────────────────────────────────────
-let edMode    = null;  // 'draw' | 'edit' | 'delete'
+let edMode    = null;  // 'draw' | 'rect' | 'edit' | 'delete'
 let edHandler = null;
 let drawVerts = [], drawDots = [], drawLineEnt = null;
+let rectP1 = null, rectP2 = null;  // chế độ vẽ hộp 3 điểm
 let selIdx    = null;
 let hndEnts   = [];
 let dragHnd   = null, isDragging = false;
@@ -482,7 +507,7 @@ function selectTree(key) {
   const t = treesData.find(t => t.soHieu === key);
   if (!t) return;
   treeHndEnt = viewer.entities.add({
-    position: Cesium.Cartesian3.fromDegrees(t.lon, t.lat, (t.chieuCao || 6) + 7),
+    position: Cesium.Cartesian3.fromDegrees(t.lon, t.lat, groundHeightOf(t) + (t.chieuCao || 6) + 5),
     point: { pixelSize: 14, color: Cesium.Color.LIME, outlineColor: Cesium.Color.BLACK, outlineWidth: 2, disableDepthTestDistance: Number.POSITIVE_INFINITY },
   });
   treeHndEnt._isTreeHnd = true; treeHndEnt._treeKey = key;
@@ -494,26 +519,117 @@ function deselectTree() {
 }
 
 function deleteTree(key) {
-  const ents = treeEntities.get(key);
-  if (ents) { ents.forEach(e => viewer.entities.remove(e)); treeEntities.delete(key); }
   if (treeHndEnt?._treeKey === key) { viewer.entities.remove(treeHndEnt); treeHndEnt = null; }
   const idx = treesData.findIndex(t => t.soHieu === key);
   if (idx >= 0) treesData.splice(idx, 1);
   selTreeKey = null; isDraggingTree = false;
+  rebuildTreeLayer();
   buildTreePanel(); saveData();
 }
 
+// Di chuyển cây: cập nhật dữ liệu + handle. KHÔNG rebuild ở đây (gọi mỗi mousemove
+// sẽ lag); người gọi rebuild 1 lần khi thả chuột.
 function moveTreeTo(key, lon, lat) {
   const idx = treesData.findIndex(t => t.soHieu === key); if (idx < 0) return;
   const t = treesData[idx];
-  const ents = treeEntities.get(key);
-  if (ents) { ents.forEach(e => viewer.entities.remove(e)); treeEntities.delete(key); }
   t.lon = lon; t.lat = lat;
-  renderTree(lon, lat, t);
   if (treeHndEnt?._treeKey === key)
     treeHndEnt.position = new Cesium.ConstantPositionProperty(
-      Cesium.Cartesian3.fromDegrees(lon, lat, (t.chieuCao || 6) + 7)
+      Cesium.Cartesian3.fromDegrees(lon, lat, groundHeightOf(t) + (t.chieuCao || 6) + 5)
     );
+}
+
+function clearAllTrees() {
+  if (!treesData.length) return;
+  if (!confirm(`Xóa tất cả ${treesData.length} cây? Thao tác không thể hoàn tác.`)) return;
+  removeTrees(viewer.scene);
+  deselectTree();
+  treesData.length = 0;
+  buildTreePanel();
+  saveData();
+  status().textContent = "Đã xóa tất cả cây";
+}
+
+// ── Row drawing (vẽ hàng cây) ─────────────────────────────────
+function enterRowMode(species) {
+  if (addModeSpecies) exitAddMode();
+  rowModeSpecies = species;
+  rowStart = null;
+  if (rowHandler) { rowHandler.destroy(); rowHandler = null; }
+  viewer.canvas.style.cursor = "crosshair";
+
+  rowHandler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+  rowHandler.setInputAction((evt) => {
+    const pos = getMapPos(evt.position);
+    if (!pos) return;
+    if (!rowStart) {
+      rowStart = pos;
+      rowStartEnt = viewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(pos.lon, pos.lat, 2),
+        point: {
+          pixelSize: 12, color: Cesium.Color.LIME,
+          outlineColor: Cesium.Color.BLACK, outlineWidth: 2,
+          disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        },
+      });
+      status().textContent = `Hàng ${species}: click điểm CUỐI — Esc để hủy`;
+      buildTreePanel();
+    } else {
+      const end = pos;
+      if (rowStartEnt) { viewer.entities.remove(rowStartEnt); rowStartEnt = null; }
+      const savedStart = rowStart;
+      exitRowMode();
+      placeTreeRow(species, savedStart, end);
+    }
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+  buildTreePanel();
+  status().textContent = `Hàng ${species}: click điểm ĐẦU hàng — Esc để hủy`;
+}
+
+function exitRowMode() {
+  rowModeSpecies = null;
+  rowStart = null;
+  if (rowHandler)  { rowHandler.destroy(); rowHandler = null; }
+  if (rowStartEnt) { viewer.entities.remove(rowStartEnt); rowStartEnt = null; }
+  if (viewer) viewer.canvas.style.cursor = "";
+  buildTreePanel();
+}
+
+function placeTreeRow(species, start, end) {
+  const cosLat = Math.cos(start.lat * Math.PI / 180);
+  const dx = (end.lon - start.lon) * 111320 * cosLat;
+  const dy = (end.lat - start.lat) * 111000;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+
+  const raw = prompt(
+    `Khoảng cách giữa cây (m)?\nTổng chiều dài hàng: ${dist.toFixed(0)} m`,
+    "8"
+  );
+  if (!raw) return;
+  const spacing = parseFloat(raw);
+  if (!spacing || spacing <= 0) return;
+
+  const n = Math.max(1, Math.floor(dist / spacing) + 1);
+  const now = new Date().getFullYear();
+
+  for (let i = 0; i < n; i++) {
+    const t = n > 1 ? i / (n - 1) : 0;
+    const lon = start.lon + t * (end.lon - start.lon);
+    const lat = start.lat + t * (end.lat - start.lat);
+    const soHieu = nextSoHieu(species);
+    const treeData = {
+      soHieu, tenLoai: species,
+      chieuCao: 6, duongKinh: 2, namTrong: now, trangThai: "Tốt",
+      lon, lat,
+    };
+    treesData.push(treeData);
+  }
+
+  rebuildTreeLayer();
+  saveData();
+  buildTreePanel();
+  status().textContent = `Đã thêm ${n} cây ${species} theo hàng`;
 }
 
 function convertPtToPolyBuilding(key) {
@@ -612,9 +728,11 @@ function buildEdProps(idx) {
 function setEdMode(mode) {
   if (edMode === "edit") { clearHandles(); deselectTree(); }
   if (edMode === "draw") clearDrawing();
+  if (edMode === "rect") clearRect();
   edMode = mode;
   if (edHandler) { edHandler.destroy(); edHandler = null; }
-  if (viewer) viewer.canvas.style.cursor = (mode === "draw" || mode === "delete") ? "crosshair" : "";
+  if (viewer) viewer.canvas.style.cursor =
+    (mode === "draw" || mode === "rect" || mode === "delete") ? "crosshair" : "";
   buildEdToolbar();
   buildEdHint();
   if (mode) setupEdHandler();
@@ -661,16 +779,20 @@ function setupEdHandler() {
 
     edHandler.setInputAction(() => {
       const wasDrag = isDragging || isDraggingTree;
+      const wasTreeDrag = isDraggingTree;
       isDragging = false; dragHnd = null;
       isDraggingTree = false;
       viewer.scene.screenSpaceCameraController.enableRotate = true;
       viewer.scene.screenSpaceCameraController.enableZoom   = true;
+      if (wasTreeDrag) rebuildTreeLayer(); // cập nhật vị trí cây 1 lần khi thả
       if (wasDrag) saveData();
     }, Cesium.ScreenSpaceEventType.LEFT_UP);
 
     edHandler.setInputAction(evt => {
       if (isDragging || isDraggingTree) return;
       const p = viewer.scene.pick(evt.position);
+      const treeId = pickedTreeId(p);
+      if (treeId) { clearHandles(); selectTree(treeId); return; }
       if (!p?.id) { clearHandles(); deselectTree(); return; }
       const e = p.id;
       if (e._isHnd && e._hndType === "mid") {
@@ -681,8 +803,6 @@ function setupEdHandler() {
         deselectTree();
         const idx = polyBuildings.findIndex(b => b.tenCty === e._polyKey);
         if (idx >= 0) showHandles(idx);
-      } else if (e._treeKey && !e._isTreeHnd) {
-        clearHandles(); selectTree(e._treeKey);
       } else if (e._ptKey) {
         clearHandles(); deselectTree(); convertPtToPolyBuilding(e._ptKey);
       } else if (!e._isHnd && !e._isTreeHnd) {
@@ -691,14 +811,21 @@ function setupEdHandler() {
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
     edHandler.setInputAction(evt => {
-      const p = viewer.scene.pick(evt.position); if (!p?.id) return;
+      const p = viewer.scene.pick(evt.position);
+      const treeId = pickedTreeId(p);
+      if (treeId || selTreeKey) {
+        const key = treeId || selTreeKey;
+        if (key && confirm(`Xóa cây "${key}"?`)) deleteTree(key);
+        return;
+      }
+      if (!p?.id) return;
       const e = p.id;
       if (e._isHnd && e._hndType === "vert") {
         const { _vi, _pi } = e;
         if (polyBuildings[_pi].polygon.length <= 3) return;
         polyBuildings[_pi].polygon.splice(_vi, 1);
         updatePolyGeometry(_pi); showHandles(_pi); saveData();
-      } else if (e._isTreeHnd || e._treeKey) {
+      } else if (e._isTreeHnd) {
         const key = e._treeKey || selTreeKey;
         if (key && confirm(`Xóa cây "${key}"?`)) deleteTree(key);
       }
@@ -728,9 +855,36 @@ function setupEdHandler() {
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
   }
 
+  if (edMode === "rect") {
+    const addDot = (pos) => viewer.entities.add({
+      position: Cesium.Cartesian3.fromDegrees(pos.lon, pos.lat, 20),
+      point: { pixelSize: 10, color: Cesium.Color.ORANGE, outlineColor: Cesium.Color.WHITE, outlineWidth: 2, disableDepthTestDistance: Number.POSITIVE_INFINITY },
+    });
+    edHandler.setInputAction(evt => {
+      const pos = getMapPos(evt.position); if (!pos) return;
+      if (!rectP1)      { rectP1 = pos; drawDots.push(addDot(pos)); }
+      else if (!rectP2) { rectP2 = pos; drawDots.push(addDot(pos)); }
+      else {
+        const corners = rectCorners(rectP1, rectP2, pos);
+        clearRect();
+        openBuildingModal(corners);
+      }
+      buildEdHint();
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+    edHandler.setInputAction(evt => {
+      const pos = getMapPos(evt.endPosition); if (!pos) return;
+      if (rectP1 && !rectP2)      showPreviewLine([[rectP1.lon, rectP1.lat], [pos.lon, pos.lat]], false);
+      else if (rectP1 && rectP2)  showPreviewLine(rectCorners(rectP1, rectP2, pos), true);
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+  }
+
   if (edMode === "delete") {
     edHandler.setInputAction(evt => {
-      const p = viewer.scene.pick(evt.position); if (!p?.id) return;
+      const p = viewer.scene.pick(evt.position);
+      const treeId = pickedTreeId(p);
+      if (treeId) { if (confirm(`Xóa cây "${treeId}"?`)) deleteTree(treeId); return; }
+      if (!p?.id) return;
       const e = p.id;
       if (e._polyKey) {
         const idx = polyBuildings.findIndex(b => b.tenCty === e._polyKey);
@@ -741,8 +895,6 @@ function setupEdHandler() {
           viewer.entities.remove(pt.wall); viewer.entities.remove(pt.roof);
           ptBuildings.delete(e._ptKey); saveData();
         }
-      } else if (e._treeKey) {
-        if (confirm(`Xóa cây "${e._treeKey}"?`)) deleteTree(e._treeKey);
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
   }
@@ -769,9 +921,48 @@ function clearDrawing() {
   buildEdHint();
 }
 
+// Dọn state chế độ vẽ hộp (dùng chung drawDots/drawLineEnt làm marker/preview).
+function clearRect() {
+  rectP1 = null; rectP2 = null;
+  drawDots.forEach(d => viewer.entities.remove(d)); drawDots = [];
+  if (drawLineEnt) { viewer.entities.remove(drawLineEnt); drawLineEnt = null; }
+  buildEdHint();
+}
+
+// Polyline preview dùng chung. corners: mảng [lon,lat]; closed: nối về điểm đầu.
+function showPreviewLine(corners, closed) {
+  const positions = corners.map(([lon, lat]) => Cesium.Cartesian3.fromDegrees(lon, lat, 20));
+  if (closed && corners.length >= 3) positions.push(positions[0]);
+  if (drawLineEnt) {
+    drawLineEnt.polyline.positions = new Cesium.ConstantProperty(positions);
+  } else {
+    drawLineEnt = viewer.entities.add({
+      polyline: { positions: new Cesium.ConstantProperty(positions), width: 2.5, material: new Cesium.ColorMaterialProperty(Cesium.Color.ORANGE.withAlpha(0.85)) },
+    });
+  }
+}
+
+// Hình chữ nhật từ 1 cạnh (p1→p2) + bề sâu = khoảng vuông góc từ con trỏ tới cạnh.
+// Tính trong hệ mét cục bộ để góc luôn vuông, ở mọi góc xoay của lô.
+function rectCorners(p1, p2, cur) {
+  const MLON = 111320 * Math.cos(p1.lat * Math.PI / 180), MLAT = 110540;
+  const bx = (p2.lon - p1.lon) * MLON,  by = (p2.lat - p1.lat) * MLAT;
+  const cx = (cur.lon - p1.lon) * MLON, cy = (cur.lat - p1.lat) * MLAT;
+  const elen = Math.hypot(bx, by) || 1;
+  const px = -by / elen, py = bx / elen;     // pháp tuyến đơn vị của cạnh
+  const d  = cx * px + cy * py;               // bề sâu có dấu
+  const m2ll = (mx, my) => [p1.lon + mx / MLON, p1.lat + my / MLAT];
+  return [ m2ll(0, 0), m2ll(bx, by), m2ll(bx + px * d, by + py * d), m2ll(px * d, py * d) ];
+}
+
 function finishDraw() {
   const verts = [...drawVerts];
   clearDrawing();
+  openBuildingModal(verts);
+}
+
+// Mở modal nhập thông tin rồi tạo nhà xưởng từ mảng đỉnh [lon,lat].
+function openBuildingModal(verts) {
   const modal = document.getElementById("draw-modal");
   modal.style.display = "flex";
   modal.querySelector("#dm-name").focus();
@@ -802,11 +993,13 @@ function buildEdToolbar() {
   tb.innerHTML = `
     <span class="et-label">Nhà xưởng</span>
     <button class="et-btn${edMode === "edit"   ? " et-on" : ""}" id="et-edit" title="Chọn & kéo đỉnh để sửa hình">↗ Sửa</button>
-    <button class="et-btn${edMode === "draw"   ? " et-on" : ""}" id="et-draw" title="Vẽ nhà xưởng mới">＋ Vẽ</button>
+    <button class="et-btn${edMode === "rect"   ? " et-on" : ""}" id="et-rect" title="Vẽ hộp chữ nhật: click 2 điểm 1 cạnh rồi kéo bề sâu — luôn vuông góc">▭ Hộp</button>
+    <button class="et-btn${edMode === "draw"   ? " et-on" : ""}" id="et-draw" title="Vẽ tự do từng góc">＋ Vẽ</button>
     <button class="et-btn${edMode === "delete" ? " et-on et-danger" : ""}" id="et-del"  title="Xóa nhà xưởng">🗑</button>
     <div class="et-sep"></div>
     <button class="et-btn" id="et-export" title="Tải xuống JSON">⬇ JSON</button>`;
   document.getElementById("et-edit").onclick   = () => setEdMode(edMode === "edit"   ? null : "edit");
+  document.getElementById("et-rect").onclick   = () => setEdMode(edMode === "rect"   ? null : "rect");
   document.getElementById("et-draw").onclick   = () => setEdMode(edMode === "draw"   ? null : "draw");
   document.getElementById("et-del").onclick    = () => setEdMode(edMode === "delete" ? null : "delete");
   document.getElementById("et-export").onclick = exportBuildings;
@@ -819,6 +1012,11 @@ function buildEdHint() {
     hint.textContent = n === 0 ? "Click để đặt góc đầu tiên"
       : n < 3 ? `${n} góc — cần thêm ${3 - n} góc nữa · Esc hủy`
       : `${n} góc — Double-click để hoàn thành · Esc hủy`;
+    hint.style.display = "block";
+  } else if (edMode === "rect") {
+    hint.textContent = !rectP1 ? "Hộp chữ nhật: click GÓC 1 của một cạnh"
+      : !rectP2 ? "Click GÓC 2 (xong 1 cạnh)"
+      : "Di chuột kéo ra BỀ SÂU → click để tạo hộp · Esc hủy";
     hint.style.display = "block";
   } else if (edMode === "edit") {
     hint.textContent = "Click nhà xưởng/cây để chọn → kéo để di chuyển · Điểm xanh = thêm góc · Chuột phải = xóa đỉnh/cây · Click công ty cũ để chuyển sang polygon";
@@ -954,17 +1152,18 @@ async function addBuildings(v, excludeNames = new Set()) {
 }
 
 async function addTrees(savedTrees) {
-  let data = savedTrees?.length ? savedTrees : null;
-  if (!data) {
+  // null = chưa lưu → load từ cay.geojson rồi trigger save; [] hoặc array = dùng đúng dữ liệu đã lưu
+  let data = savedTrees;
+  let needsSave = false;
+  if (data === null) {
+    needsSave = true;
     try {
       const gj = await (await fetch("/data/cay.geojson")).json();
       data = gj.features.map(f => ({ ...f.properties, lon: f.geometry.coordinates[0], lat: f.geometry.coordinates[1] }));
     } catch (e) { console.warn("trees", e.message); data = []; }
   }
-  for (const t of data) {
-    treesData.push(t);
-    renderTree(t.lon, t.lat, t);
-  }
+  for (const t of data) treesData.push(t);
+  return needsSave;
 }
 
 async function addRoads(v) {
@@ -1017,9 +1216,10 @@ export async function load3D() {
   if (!escListenerAttached) {
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        if (addModeSpecies) exitAddMode();
-        if (pickMode) exitPickMode();
-        if (edMode) setEdMode(null);
+        if (addModeSpecies)  exitAddMode();
+        if (rowModeSpecies)  exitRowMode();
+        if (pickMode)        exitPickMode();
+        if (edMode)          setEdMode(null);
       }
     });
     escListenerAttached = true;
@@ -1032,10 +1232,41 @@ export async function load3D() {
         timeline: false, animation: false, sceneModePicker: false,
         navigationHelpButton: false, homeButton: false, infoBox: true,
         shadows: true,
+        // Logarithmic depth buffer: prevents Z-fighting on tall buildings
+        // and makes the perspective look correct at all zoom levels.
+        logarithmicDepthBuffer: true,
       });
+      // Chỉ vẽ lại khi cảnh thay đổi (camera di chuyển, entity/model load…),
+      // không vẽ liên tục mỗi frame → đứng yên gần như 0 tải.
+      viewer.scene.requestRenderMode = true;
+      viewer.scene.maximumRenderTimeChange = Infinity;
+
+      // Cây giờ là Primitive batch (không phải Entity) nên selection mặc định của
+      // Viewer không nhận. Thay handler LEFT_CLICK: cây → InfoBox cây; entity khác
+      // (nhà xưởng) → chọn như cũ; click trống → bỏ chọn.
+      viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      viewer.screenSpaceEventHandler.setInputAction((e) => {
+        if (edMode || addModeSpecies || rowModeSpecies || pickMode) return; // các mode có handler riêng
+        const picked = viewer.scene.pick(e.position);
+        const treeId = pickedTreeId(picked);
+        if (treeId) { showTreeInfo(treeId); return; }
+        viewer.selectedEntity = (picked && picked.id instanceof Cesium.Entity) ? picked.id : undefined;
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
       viewer.imageryLayers.add(new Cesium.ImageryLayer(
         new Cesium.OpenStreetMapImageryProvider({ url: "https://tile.openstreetmap.org/" })
       ));
+      // Globe uses a basemap tile, so it doesn't need sun lighting.
+      // Lighting is applied only to building primitives via DirectionalLight.
+      viewer.scene.globe.enableLighting = false;
+
+      // Custom light: overhead-ish direction with high intensity so wall faces
+      // are bright but still shade enough to show depth.
+      // direction is in world-space ECEF; (0,0,-1) points "down" from above.
+      viewer.scene.light = new Cesium.DirectionalLight({
+        direction: new Cesium.Cartesian3(0.35, 0.35, -0.87), // ~NE overhead sun
+        intensity: 2.8,
+      });
       try {
         viewer.terrainProvider =
           await Cesium.ArcGISTiledElevationTerrainProvider.fromUrl(ESRI_TERRAIN);
@@ -1056,10 +1287,14 @@ export async function load3D() {
       status().textContent = "Đang render nhà xưởng…";
       await addRoads(viewer);
       const savedData = await loadData();
-      addAllPolyBuildings(savedData.buildings, savedData.deleted);
-      await addTrees(savedData.trees);
+      addAllPolyBuildings(savedData.buildings);
+      const treeNeedsSave = await addTrees(savedData.trees);
+      await rebuildTreeLayer();
       loaded = true;
       buildTreePanel();
+      document.getElementById("tree-panel").style.display = "flex"; // hiện danh sách bên trái
+      addHeroTreeTest(); // TEST: 1 cây model glb thật + bay tới xem
+      if (treeNeedsSave) saveData(); // lần đầu: migrate cây từ cay.geojson → mhs_buildings.json
       status().textContent = `3D: ${treesData.length} cây — click cây để xem thông tin`;
     } else {
       const panel = document.getElementById("tree-panel");

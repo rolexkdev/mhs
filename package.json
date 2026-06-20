@@ -5,17 +5,20 @@
   "type": "module",
   "description": "Clone bản đồ KCN Dầu Giây (4 page 2D Leaflet + 1 page 3D Cesium). Không dùng ArcGIS JS API.",
   "scripts": {
+    "gen-trees": "node scripts/gen-trees.mjs",
+    "gen-sao-den": "node scripts/gen-sao-den.mjs",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "fetch-data": "node scripts/fetch-data.mjs"
   },
   "dependencies": {
-    "leaflet": "^1.9.4",
+    "cesium": "^1.142.0",
     "chart.js": "^4.4.1",
-    "cesium": "^1.123.0"
+    "leaflet": "^1.9.4"
   },
   "devDependencies": {
+    "@gltf-transform/cli": "^4.4.0",
     "playwright": "^1.61.0",
     "vite": "^5.4.0",
     "vite-plugin-cesium": "^1.2.23"

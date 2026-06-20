@@ -161,7 +161,7 @@ body { font-family:system-ui,Segoe UI,sans-serif; }
 /* ── Editor toolbar ──────────────────────────────────────── */
 #ed-toolbar {
   position: absolute;
-  top: 56px; right: 10px;
+  bottom: 14px; right: 12px;   /* góc phải-dưới: chừa chỗ InfoBox (phải-trên) */
   z-index: 1000;
   display: none;
   align-items: center;
@@ -204,7 +204,7 @@ body { font-family:system-ui,Segoe UI,sans-serif; }
 /* ── Editor properties panel ─────────────────────────────── */
 #ed-props {
   position: absolute;
-  right: 10px; top: 110px;
+  right: 12px; bottom: 64px;   /* ngay trên toolbar, không đè InfoBox */
   z-index: 1000;
   width: 240px;
   background: rgba(255,255,255,0.97);
@@ -364,6 +364,44 @@ body { font-family:system-ui,Segoe UI,sans-serif; }
 .tp-add:hover { background: #1b5e20; transform: scale(1.1); }
 .tp-add--active { background: #e53935; font-size: 13px; }
 .tp-add--active:hover { background: #b71c1c; }
+/* Nút vẽ hàng cây */
+.tp-row {
+  width: 22px; height: 22px;
+  border: 1.5px solid #9e9e9e;
+  background: transparent;
+  color: #555;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s, color .15s;
+}
+.tp-row:hover { background: #e8f5e9; color: #2e7d32; border-color: #2e7d32; }
+.tp-row--active { background: #e65100; color: #fff; border-color: #e65100; }
+.tp-row--active:hover { background: #bf360c; border-color: #bf360c; }
+/* Nút xóa tất cả cây */
+.tp-clear-btn {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 0 2px;
+  opacity: .7;
+  transition: opacity .15s, transform .1s;
+  line-height: 1;
+}
+.tp-clear-btn:hover { opacity: 1; transform: scale(1.2); }
+.tp-header {
+  display: flex;
+  align-items: center;
+}
 .tp-footer {
   padding: 10px 14px;
   font-size: 12px;
