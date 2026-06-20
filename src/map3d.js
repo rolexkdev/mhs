@@ -2,7 +2,6 @@ import * as Cesium from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import { ESRI_TERRAIN, CAMERA_3D } from "./config.js";
 import { addBuilding3D, removeBuilding3D, sampleGroundHeight } from "./building3d.js";
-import { ensureHeights, rebuildTrees, removeTrees, groundHeightOf, pickedTreeId } from "./treelayer.js";
 
 let viewer = null, loaded = false;
 const status = () => document.getElementById("status");
@@ -11,8 +10,8 @@ const LAT_M = 111000;
 // Chỉ tập trung 2 loài trước. Mỗi loài có `shape` để treelayer dựng đúng dáng:
 //   cone = cây tán nón (sao đen);  palm = cau vua (thân cao mảnh + tán xòe).
 const TREE_TYPES = {
-  "Cây Sao Đen":  { color: "#1B5E20", trunkColor: "#4D3321", prefix: "SD",  shape: "cone" },
-  "Cây Cau Vua":  { color: "#2E7D32", trunkColor: "#9E9E9E", prefix: "CAU", shape: "palm" },
+  "Cây Sao Đen":  { color: "#1B5E20", trunkColor: "#4D3321", prefix: "SD",  model: "models/saoden.glb" },
+  "Cây Cau Vua":  { color: "#2E7D32", trunkColor: "#9E9E9E", prefix: "CAU", model: "models/cauvua.glb" },
 };
 
 // Companies with surveyed lot-boundary polygons — drawn from actual coordinates
@@ -57,6 +56,7 @@ let rowHandler      = null;
 let rowStartEnt     = null;
 let escListenerAttached = false;
 let ptBuildings   = new Map(); // tenCty → { props, polygon, h, wall, roof }
+let treeEntities  = new Map(); // soHieu → model entity
 let selTreeKey    = null;
 let treeHndEnt    = null;
 let isDraggingTree = false;
@@ -228,54 +228,40 @@ function nextSoHieu(species) {
   return `${prefix}-${String(maxNum + 1).padStart(3, "0")}`;
 }
 
-// Dựng lại toàn bộ cây trong 1 Primitive batch (1 draw call thay vì N model).
-// Lấy độ cao terrain cho cây mới rồi rebuild; an toàn khi gọi nhiều lần.
-async function rebuildTreeLayer() {
-  if (!viewer) return;
-  await ensureHeights(viewer.scene, treesData);
-  rebuildTrees(viewer.scene, treesData, TREE_TYPES);
-  viewer.scene.requestRender();
-}
-
-// Hiện InfoBox cho 1 cây (click ở chế độ xem). Dùng 1 entity ẩn mang mô tả.
-let treeInfoEnt = null;
-function showTreeInfo(soHieu) {
-  const t = treesData.find((x) => x.soHieu === soHieu);
-  if (!t) return;
-  const pos = Cesium.Cartesian3.fromDegrees(+t.lon, +t.lat, groundHeightOf(t) + (t.chieuCao || 6));
-  if (!treeInfoEnt) {
-    treeInfoEnt = viewer.entities.add({
-      point: { pixelSize: 1, color: Cesium.Color.TRANSPARENT, disableDepthTestDistance: Number.POSITIVE_INFINITY },
-    });
-  }
-  treeInfoEnt.position = new Cesium.ConstantPositionProperty(pos);
-  treeInfoEnt.name = `${t.tenLoai} — ${t.soHieu}`;
-  treeInfoEnt.description = treeDesc(t);
-  viewer.selectedEntity = treeInfoEnt;
-}
-
-// TEST: render 1 cây từ model glb thật để xem thử (model bbox cao 2 đơn vị, gốc ở
-// giữa → base ở Y=-1, nên đặt cao = 1*scale rồi RELATIVE_TO_GROUND để gốc chạm đất).
-let heroTested = false;
-function addHeroTreeTest() {
-  if (heroTested || !viewer) return;
-  heroTested = true;
-  const lon = 106.5605, lat = 11.5299, scale = 8; // ~16 m
+// Render 1 cây bằng model glb thật. Model bbox cao 2 đơn vị, gốc ở giữa → base ở
+// Y=-1; đặt cao = scale (=1*scale) + RELATIVE_TO_GROUND để gốc chạm terrain.
+function renderTree(t) {
+  const cfg = TREE_TYPES[t.tenLoai];
+  if (!cfg?.model || !viewer) return;
+  const scale = (t.chieuCao || 16) / 2;
   const e = viewer.entities.add({
-    name: "Cây Cau Vua — model 3D thật (TEST)",
-    description: "<b>Model .glb cau vua</b><br>Render 1 cây để xem thử dáng/màu/kích thước.",
-    position: Cesium.Cartesian3.fromDegrees(lon, lat, scale),
+    name: `${t.tenLoai} — ${t.soHieu}`,
+    description: treeDesc(t),
+    position: Cesium.Cartesian3.fromDegrees(+t.lon, +t.lat, scale),
     model: {
-      uri: "models/cauvua.glb",
-      scale,
-      minimumPixelSize: 64,
+      uri: cfg.model, scale, minimumPixelSize: 40,
       heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
     },
   });
-  viewer.flyTo(e, {
-    duration: 2.5,
-    offset: new Cesium.HeadingPitchRange(Cesium.Math.toRadians(25), Cesium.Math.toRadians(-12), 55),
-  }).catch(() => {});
+  e._treeKey = t.soHieu;
+  treeEntities.set(t.soHieu, e);
+}
+
+// Xoá hết entity cây rồi dựng lại từ treesData (dùng khi load / clear).
+function rebuildTreeLayer() {
+  if (!viewer) return;
+  for (const e of treeEntities.values()) viewer.entities.remove(e);
+  treeEntities.clear();
+  for (const t of treesData) renderTree(t);
+  viewer.scene.requestRender();
+}
+
+// Vẽ lại 1 cây (sau khi di chuyển).
+function rerenderTree(key) {
+  const old = treeEntities.get(key);
+  if (old) { viewer.entities.remove(old); treeEntities.delete(key); }
+  const t = treesData.find(x => x.soHieu === key);
+  if (t) renderTree(t);
 }
 
 function buildTreePanel() {
@@ -371,8 +357,9 @@ function enterAddMode(species) {
       namTrong: new Date().getFullYear(),
       trangThai: "Tốt",
     };
-    treesData.push({ ...p, lon, lat });
-    rebuildTreeLayer();
+    const nt = { ...p, lon, lat };
+    treesData.push(nt);
+    renderTree(nt);
     saveData();
     exitAddMode();
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -507,8 +494,9 @@ function selectTree(key) {
   const t = treesData.find(t => t.soHieu === key);
   if (!t) return;
   treeHndEnt = viewer.entities.add({
-    position: Cesium.Cartesian3.fromDegrees(t.lon, t.lat, groundHeightOf(t) + (t.chieuCao || 6) + 5),
-    point: { pixelSize: 14, color: Cesium.Color.LIME, outlineColor: Cesium.Color.BLACK, outlineWidth: 2, disableDepthTestDistance: Number.POSITIVE_INFINITY },
+    position: Cesium.Cartesian3.fromDegrees(t.lon, t.lat, (t.chieuCao || 16) + 4),
+    point: { pixelSize: 14, color: Cesium.Color.LIME, outlineColor: Cesium.Color.BLACK, outlineWidth: 2,
+      heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND, disableDepthTestDistance: Number.POSITIVE_INFINITY },
   });
   treeHndEnt._isTreeHnd = true; treeHndEnt._treeKey = key;
 }
@@ -519,30 +507,32 @@ function deselectTree() {
 }
 
 function deleteTree(key) {
+  const e = treeEntities.get(key);
+  if (e) { viewer.entities.remove(e); treeEntities.delete(key); }
   if (treeHndEnt?._treeKey === key) { viewer.entities.remove(treeHndEnt); treeHndEnt = null; }
   const idx = treesData.findIndex(t => t.soHieu === key);
   if (idx >= 0) treesData.splice(idx, 1);
   selTreeKey = null; isDraggingTree = false;
-  rebuildTreeLayer();
   buildTreePanel(); saveData();
 }
 
-// Di chuyển cây: cập nhật dữ liệu + handle. KHÔNG rebuild ở đây (gọi mỗi mousemove
-// sẽ lag); người gọi rebuild 1 lần khi thả chuột.
+// Di chuyển cây: cập nhật dữ liệu + handle. Model giữ nguyên trong lúc kéo,
+// chỉ vẽ lại 1 lần khi thả (rerenderTree) để khỏi nặng.
 function moveTreeTo(key, lon, lat) {
   const idx = treesData.findIndex(t => t.soHieu === key); if (idx < 0) return;
   const t = treesData[idx];
   t.lon = lon; t.lat = lat;
   if (treeHndEnt?._treeKey === key)
     treeHndEnt.position = new Cesium.ConstantPositionProperty(
-      Cesium.Cartesian3.fromDegrees(lon, lat, groundHeightOf(t) + (t.chieuCao || 6) + 5)
+      Cesium.Cartesian3.fromDegrees(lon, lat, (t.chieuCao || 16) + 4)
     );
 }
 
 function clearAllTrees() {
   if (!treesData.length) return;
   if (!confirm(`Xóa tất cả ${treesData.length} cây? Thao tác không thể hoàn tác.`)) return;
-  removeTrees(viewer.scene);
+  for (const e of treeEntities.values()) viewer.entities.remove(e);
+  treeEntities.clear();
   deselectTree();
   treesData.length = 0;
   buildTreePanel();
@@ -624,9 +614,9 @@ function placeTreeRow(species, start, end) {
       lon, lat,
     };
     treesData.push(treeData);
+    renderTree(treeData);
   }
 
-  rebuildTreeLayer();
   saveData();
   buildTreePanel();
   status().textContent = `Đã thêm ${n} cây ${species} theo hàng`;
@@ -779,19 +769,19 @@ function setupEdHandler() {
 
     edHandler.setInputAction(() => {
       const wasDrag = isDragging || isDraggingTree;
-      const wasTreeDrag = isDraggingTree;
+      const treeKey = isDraggingTree ? selTreeKey : null;
       isDragging = false; dragHnd = null;
       isDraggingTree = false;
       viewer.scene.screenSpaceCameraController.enableRotate = true;
       viewer.scene.screenSpaceCameraController.enableZoom   = true;
-      if (wasTreeDrag) rebuildTreeLayer(); // cập nhật vị trí cây 1 lần khi thả
+      if (treeKey) rerenderTree(treeKey); // vẽ lại cây tại vị trí mới khi thả
       if (wasDrag) saveData();
     }, Cesium.ScreenSpaceEventType.LEFT_UP);
 
     edHandler.setInputAction(evt => {
       if (isDragging || isDraggingTree) return;
       const p = viewer.scene.pick(evt.position);
-      const treeId = pickedTreeId(p);
+      const treeId = (p?.id?._treeKey && !p.id._isTreeHnd) ? p.id._treeKey : null;
       if (treeId) { clearHandles(); selectTree(treeId); return; }
       if (!p?.id) { clearHandles(); deselectTree(); return; }
       const e = p.id;
@@ -812,7 +802,7 @@ function setupEdHandler() {
 
     edHandler.setInputAction(evt => {
       const p = viewer.scene.pick(evt.position);
-      const treeId = pickedTreeId(p);
+      const treeId = (p?.id?._treeKey && !p.id._isTreeHnd) ? p.id._treeKey : null;
       if (treeId || selTreeKey) {
         const key = treeId || selTreeKey;
         if (key && confirm(`Xóa cây "${key}"?`)) deleteTree(key);
@@ -882,7 +872,7 @@ function setupEdHandler() {
   if (edMode === "delete") {
     edHandler.setInputAction(evt => {
       const p = viewer.scene.pick(evt.position);
-      const treeId = pickedTreeId(p);
+      const treeId = p?.id?._treeKey || null;
       if (treeId) { if (confirm(`Xóa cây "${treeId}"?`)) deleteTree(treeId); return; }
       if (!p?.id) return;
       const e = p.id;
@@ -1241,15 +1231,12 @@ export async function load3D() {
       viewer.scene.requestRenderMode = true;
       viewer.scene.maximumRenderTimeChange = Infinity;
 
-      // Cây giờ là Primitive batch (không phải Entity) nên selection mặc định của
-      // Viewer không nhận. Thay handler LEFT_CLICK: cây → InfoBox cây; entity khác
-      // (nhà xưởng) → chọn như cũ; click trống → bỏ chọn.
+      // Thay handler LEFT_CLICK mặc định: click cây/nhà xưởng (entity) → InfoBox;
+      // click trống → bỏ chọn. Gác lại khi đang ở mode sửa/thêm/vẽ/lấy-tọa-độ.
       viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
       viewer.screenSpaceEventHandler.setInputAction((e) => {
-        if (edMode || addModeSpecies || rowModeSpecies || pickMode) return; // các mode có handler riêng
+        if (edMode || addModeSpecies || rowModeSpecies || pickMode) return;
         const picked = viewer.scene.pick(e.position);
-        const treeId = pickedTreeId(picked);
-        if (treeId) { showTreeInfo(treeId); return; }
         viewer.selectedEntity = (picked && picked.id instanceof Cesium.Entity) ? picked.id : undefined;
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
@@ -1293,7 +1280,6 @@ export async function load3D() {
       loaded = true;
       buildTreePanel();
       document.getElementById("tree-panel").style.display = "flex"; // hiện danh sách bên trái
-      addHeroTreeTest(); // TEST: 1 cây model glb thật + bay tới xem
       if (treeNeedsSave) saveData(); // lần đầu: migrate cây từ cay.geojson → mhs_buildings.json
       status().textContent = `3D: ${treesData.length} cây — click cây để xem thông tin`;
     } else {
