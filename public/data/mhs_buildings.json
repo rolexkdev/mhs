@@ -25,6 +25,162 @@
           11.5231264
         ]
       ]
+    },
+    {
+      "tenCty": "CÔNG TY CỔ PHẦN NAM LONG MINH HƯNG",
+      "loaiHinh": "Sản xuất giấy",
+      "loHang": "A5-3~10",
+      "dienTich": 81554,
+      "dienThoai": "0913724988",
+      "height": 16,
+      "polygon": [
+        [
+          106.5580314,
+          11.5279617
+        ],
+        [
+          106.5602963,
+          11.5281237
+        ],
+        [
+          106.5604462,
+          11.5261095
+        ],
+        [
+          106.5581829,
+          11.5259376
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH GIẤY A.F.C BÌNH PHƯỚC",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A5-1,2",
+      "dienTich": 42713,
+      "dienThoai": "0913694541",
+      "height": 16,
+      "polygon": [
+        [
+          106.5581897,
+          11.5258475
+        ],
+        [
+          106.5604529,
+          11.5260199
+        ],
+        [
+          106.5606777,
+          11.5229987
+        ],
+        [
+          106.5584171,
+          11.5228115
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH VIỆT NAM WEALTHY BEST",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A22",
+      "dienTich": 48659,
+      "dienThoai": "0938202155",
+      "height": 16,
+      "polygon": [
+        [
+          106.5584403,
+          11.5225329
+        ],
+        [
+          106.560658,
+          11.522717
+        ],
+        [
+          106.5607905,
+          11.5209541
+        ],
+        [
+          106.5585837,
+          11.5207746
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH VIỆT NAM WELLGAIN INDUSTRIAL (GLOBAL STATE LLC)",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A23",
+      "dienTich": 48297,
+      "dienThoai": "0933127168",
+      "height": 16,
+      "polygon": [
+        [
+          106.558591,
+          11.5206848
+        ],
+        [
+          106.5607973,
+          11.5208642
+        ],
+        [
+          106.5609298,
+          11.5191013
+        ],
+        [
+          106.5587343,
+          11.5189265
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH VIỆT NAM ERAWIN TEXTILE (GLOBAL STATE LLC)",
+      "loaiHinh": "Dệt may",
+      "loHang": "A21",
+      "dienTich": 47086,
+      "dienThoai": "0933127168",
+      "height": 16,
+      "polygon": [
+        [
+          106.5587416,
+          11.5188368
+        ],
+        [
+          106.5609366,
+          11.5190114
+        ],
+        [
+          106.5610692,
+          11.5172485
+        ],
+        [
+          106.558885,
+          11.5170784
+        ]
+      ]
+    },
+    {
+      "tenCty": "CÔNG TY TNHH NGŨ KIM YOUDE VIỆT NAM",
+      "loaiHinh": "Công ty sản xuất",
+      "loHang": "A10",
+      "dienTich": 177452,
+      "dienThoai": "0356272539",
+      "height": 16,
+      "polygon": [
+        [
+          106.5613271,
+          11.5227731
+        ],
+        [
+          106.5641379,
+          11.523006
+        ],
+        [
+          106.5645753,
+          11.5174951
+        ],
+        [
+          106.561777,
+          11.5172912
+        ]
+      ]
     }
   ],
   "trees": [

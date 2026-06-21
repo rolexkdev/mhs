@@ -51,10 +51,16 @@ const ROOF_COLORS = {
 // Cây ở xa hơn ngưỡng này (mét) sẽ không được vẽ — cắt draw call khi zoom out.
 const TREE_VIEW_DISTANCE = 4000.0;
 
+// Cột đèn đường: billboard ảnh, đặt cạnh hàng Sao Đen, cứ 3 cây 1 cột.
+const LAMP_IMG = "models/cotden.png";
+const LAMP_HEIGHT = 17;    // chiều cao cột đèn (m) — ~ngang cây Sao Đen (~17.6m)
+const LAMP_EVERY = 3;      // 3 cây sao đen → 1 cột
+const LAMP_INSET = 4;      // cột lệch từ hàng cây về phía đường bao nhiêu mét (sát lề trong)
+
 // Chiều cao tự nhiên (px) của từng ảnh billboard — preload 1 lần để tính scale theo mét.
 const treeImgH = new Map();
 function preloadTreeImages() {
-  const imgs = [...new Set(Object.values(TREE_TYPES).map(c => c.image).filter(Boolean))];
+  const imgs = [...new Set([...Object.values(TREE_TYPES).map(c => c.image), LAMP_IMG].filter(Boolean))];
   return Promise.all(imgs.map(src => new Promise(res => {
     const im = new Image();
     im.onload  = () => { treeImgH.set(src, im.naturalHeight); res(); };
@@ -277,7 +283,52 @@ function rebuildTreeLayer() {
   for (const e of treeEntities.values()) viewer.entities.remove(e);
   treeEntities.clear();
   for (const t of treesData) renderTree(t);
+  renderLamps();
   viewer.scene.requestRender();
+}
+
+// Dựng 2 hàng cột đèn billboard song song 2 bên đường (đối xứng qua tim đại lộ),
+// cứ LAMP_EVERY cây Sao Đen 1 cột, đặt vào GIỮA 2 cây cho khỏi bị cây che.
+let lampEntities = [];
+function renderLamps() {
+  for (const e of lampEntities) viewer.entities.remove(e);
+  lampEntities = [];
+  const A = [106.560416, 11.529871], B = [106.561345, 11.517374]; // trục đại lộ
+  const M = 111000, cosL = Math.cos(11.523 * Math.PI / 180);
+  const dx = (B[0] - A[0]) * cosL, dy = B[1] - A[1], len = Math.hypot(dx, dy);
+  const ux = dx / len, uy = dy / len, px = -uy, py = ux; // dọc & vuông góc đại lộ
+  const imgH = treeImgH.get(LAMP_IMG) || 1536;
+  const addLamp = (s, off) => {
+    const ex = (ux * s + px * off) / M, ey = (uy * s + py * off) / M;
+    const e = viewer.entities.add({
+      name: "Cột đèn đường",
+      position: Cesium.Cartesian3.fromDegrees(A[0] + ex / cosL, A[1] + ey, 0),
+      billboard: {
+        image: LAMP_IMG, sizeInMeters: true, scale: LAMP_HEIGHT / imgH,
+        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, TREE_VIEW_DISTANCE),
+      },
+    });
+    lampEntities.push(e);
+  };
+  // 2 hàng Sao Đen (Tây offset âm, Đông offset dương lớn). Mỗi hàng đặt 1 dãy cột
+  // đèn lệch LAMP_INSET mét về phía đường (sát lề trong của chính hàng cây đó).
+  const sao = treesData
+    .filter(t => t.tenLoai === "Cây Sao Đen")
+    .map(t => { const ex = (t.lon - A[0]) * cosL, ey = t.lat - A[1];
+      return { s: (ex * ux + ey * uy) * M, o: (ex * px + ey * py) * M }; });
+  const west = sao.filter(p => p.o < 0).sort((a, b) => a.s - b.s);
+  const east = sao.filter(p => p.o > 15).sort((a, b) => a.s - b.s);
+  const rowOff = arr => arr.reduce((s, p) => s + p.o, 0) / arr.length; // offset trung bình hàng cây
+  const placeRow = (arr, off) => {
+    for (let i = 0; i < arr.length; i += LAMP_EVERY) {
+      const s = (i + 1 < arr.length) ? (arr[i].s + arr[i + 1].s) / 2 : arr[i].s + 11;
+      addLamp(s, off);
+    }
+  };
+  if (west.length) placeRow(west, rowOff(west) + LAMP_INSET); // hàng cây ~-9 → cột ~-5 (về phía đường)
+  if (east.length) placeRow(east, rowOff(east) - LAMP_INSET); // hàng cây ~+23 → cột ~+19 (về phía đường)
 }
 
 // Vẽ lại 1 cây (sau khi di chuyển).

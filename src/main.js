@@ -14,11 +14,4 @@ PAGES.forEach((p,i)=>{
   tabsEl.appendChild(b); if(i===0) b.classList.add("active");
 });
 
-// Nút demo cây 3D — mở trang riêng
-const sep=document.createElement("div"); sep.className="tab-sep"; tabsEl.appendChild(sep);
-const treeBtn=document.createElement("button"); treeBtn.textContent="🌸 Xem Cây 3D";
-treeBtn.title="Demo mô hình cây xanh 3D tương tác"; treeBtn.className="tab-tree";
-treeBtn.onclick=()=>window.open("/tree-demo.html","_blank");
-tabsEl.appendChild(treeBtn);
-
 load2D(PAGES[0]);
