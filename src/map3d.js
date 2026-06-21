@@ -10,7 +10,7 @@ const LAT_M = 111000;
 // Chỉ tập trung 2 loài trước. Mỗi loài có `shape` để treelayer dựng đúng dáng:
 //   cone = cây tán nón (sao đen);  palm = cau vua (thân cao mảnh + tán xòe).
 const TREE_TYPES = {
-  "Cây Sao Đen":  { color: "#1B5E20", trunkColor: "#4D3321", prefix: "SD",  model: "models/saoden.glb" },
+  "Cây Sao Đen":  { color: "#1B5E20", trunkColor: "#4D3321", prefix: "SD",  model: "models/caysaoden.glb" },
   "Cây Cau Vua":  { color: "#2E7D32", trunkColor: "#9E9E9E", prefix: "CAU", model: "models/cauvua.glb" },
 };
 
@@ -441,6 +441,7 @@ function renderPolyBuilding(data) {
     height:    data.height || 16,
     wallColor,
     roofColor,
+    id:        key, // click thẳng vào khối (tường/mái) → nhận diện được công ty
   }).then(result => {
     polyEntities.set(key, result);
     // Attach click entity for infobox (invisible billboard at centroid)
@@ -1245,7 +1246,15 @@ export async function load3D() {
       viewer.screenSpaceEventHandler.setInputAction((e) => {
         if (edMode || addModeSpecies || rowModeSpecies || pickMode) return;
         const picked = viewer.scene.pick(e.position);
-        viewer.selectedEntity = (picked && picked.id instanceof Cesium.Entity) ? picked.id : undefined;
+        if (picked && picked.id instanceof Cesium.Entity) {
+          viewer.selectedEntity = picked.id;
+        } else if (typeof picked?.id === "string") {
+          // Click vào khối công ty (Primitive tường/mái) → mở InfoBox của khối đó.
+          const b = polyBuildings.find(x => x.tenCty === picked.id);
+          viewer.selectedEntity = b?._clickEntity || undefined;
+        } else {
+          viewer.selectedEntity = undefined;
+        }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
       viewer.imageryLayers.add(new Cesium.ImageryLayer(

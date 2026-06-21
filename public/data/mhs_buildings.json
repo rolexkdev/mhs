@@ -8,10 +8,22 @@
       "dienThoai": "02743729199",
       "height": 18,
       "polygon": [
-        [106.5608343, 11.5280812],
-        [106.5637582, 11.5282895],
-        [106.5641481, 11.5233680],
-        [106.5612418, 11.5231264]
+        [
+          106.5608343,
+          11.5280812
+        ],
+        [
+          106.5637582,
+          11.5282895
+        ],
+        [
+          106.5641481,
+          11.523368
+        ],
+        [
+          106.5612418,
+          11.5231264
+        ]
       ]
     }
   ],
@@ -735,6 +747,1056 @@
       "trangThai": "Cần chăm sóc",
       "lon": 106.5608432,
       "lat": 11.5249536
+    },
+    {
+      "soHieu": "SD-049",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.2,
+      "duongKinh": 45,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5607133,
+      "lat": 11.5247426
+    },
+    {
+      "soHieu": "CAU-025",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 17,
+      "duongKinh": 31,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5608592,
+      "lat": 11.524753
+    },
+    {
+      "soHieu": "SD-050",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.7,
+      "duongKinh": 45,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5610059,
+      "lat": 11.5247635
+    },
+    {
+      "soHieu": "SD-051",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.4,
+      "duongKinh": 35,
+      "namTrong": 2018,
+      "trangThai": "Bình thường",
+      "lon": 106.5607281,
+      "lat": 11.524544
+    },
+    {
+      "soHieu": "CAU-026",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.3,
+      "duongKinh": 31,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5608739,
+      "lat": 11.5245544
+    },
+    {
+      "soHieu": "SD-052",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.8,
+      "duongKinh": 47,
+      "namTrong": 2017,
+      "trangThai": "Tốt",
+      "lon": 106.5610206,
+      "lat": 11.5245649
+    },
+    {
+      "soHieu": "SD-053",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.5,
+      "duongKinh": 47,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5607429,
+      "lat": 11.5243454
+    },
+    {
+      "soHieu": "CAU-027",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 15.3,
+      "duongKinh": 25,
+      "namTrong": 2020,
+      "trangThai": "Bình thường",
+      "lon": 106.5608887,
+      "lat": 11.5243558
+    },
+    {
+      "soHieu": "SD-054",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.3,
+      "duongKinh": 43,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5610354,
+      "lat": 11.5243663
+    },
+    {
+      "soHieu": "SD-055",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.5,
+      "duongKinh": 52,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5607576,
+      "lat": 11.5241469
+    },
+    {
+      "soHieu": "CAU-028",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 16.4,
+      "duongKinh": 32,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5609034,
+      "lat": 11.5241573
+    },
+    {
+      "soHieu": "SD-056",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.6,
+      "duongKinh": 42,
+      "namTrong": 2021,
+      "trangThai": "Bình thường",
+      "lon": 106.5610502,
+      "lat": 11.5241677
+    },
+    {
+      "soHieu": "SD-057",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.6,
+      "duongKinh": 43,
+      "namTrong": 2016,
+      "trangThai": "Tốt",
+      "lon": 106.5607724,
+      "lat": 11.5239483
+    },
+    {
+      "soHieu": "CAU-029",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 15.2,
+      "duongKinh": 32,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5609182,
+      "lat": 11.5239587
+    },
+    {
+      "soHieu": "SD-058",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.1,
+      "duongKinh": 40,
+      "namTrong": 2020,
+      "trangThai": "Bình thường",
+      "lon": 106.5610649,
+      "lat": 11.5239692
+    },
+    {
+      "soHieu": "SD-059",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.8,
+      "duongKinh": 55,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5607872,
+      "lat": 11.5237497
+    },
+    {
+      "soHieu": "CAU-030",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.9,
+      "duongKinh": 30,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.560933,
+      "lat": 11.5237601
+    },
+    {
+      "soHieu": "SD-060",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.8,
+      "duongKinh": 49,
+      "namTrong": 2017,
+      "trangThai": "Tốt",
+      "lon": 106.5610797,
+      "lat": 11.5237706
+    },
+    {
+      "soHieu": "SD-061",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.2,
+      "duongKinh": 52,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5608019,
+      "lat": 11.5235511
+    },
+    {
+      "soHieu": "CAU-031",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.4,
+      "duongKinh": 35,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5609477,
+      "lat": 11.5235615
+    },
+    {
+      "soHieu": "SD-062",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.5,
+      "duongKinh": 52,
+      "namTrong": 2017,
+      "trangThai": "Tốt",
+      "lon": 106.5610944,
+      "lat": 11.523572
+    },
+    {
+      "soHieu": "SD-063",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17,
+      "duongKinh": 36,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5608167,
+      "lat": 11.5233526
+    },
+    {
+      "soHieu": "CAU-032",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 15.1,
+      "duongKinh": 29,
+      "namTrong": 2022,
+      "trangThai": "Bình thường",
+      "lon": 106.5609625,
+      "lat": 11.523363
+    },
+    {
+      "soHieu": "SD-064",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.3,
+      "duongKinh": 48,
+      "namTrong": 2017,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5611092,
+      "lat": 11.5233734
+    },
+    {
+      "soHieu": "SD-065",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.7,
+      "duongKinh": 54,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5608314,
+      "lat": 11.523154
+    },
+    {
+      "soHieu": "CAU-033",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 15.4,
+      "duongKinh": 30,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5609772,
+      "lat": 11.5231644
+    },
+    {
+      "soHieu": "SD-066",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 19,
+      "duongKinh": 40,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.561124,
+      "lat": 11.5231749
+    },
+    {
+      "soHieu": "SD-067",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.1,
+      "duongKinh": 50,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5608462,
+      "lat": 11.5229554
+    },
+    {
+      "soHieu": "CAU-034",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14,
+      "duongKinh": 28,
+      "namTrong": 2021,
+      "trangThai": "Bình thường",
+      "lon": 106.560992,
+      "lat": 11.5229658
+    },
+    {
+      "soHieu": "SD-068",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.6,
+      "duongKinh": 38,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5611387,
+      "lat": 11.5229763
+    },
+    {
+      "soHieu": "SD-069",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.6,
+      "duongKinh": 53,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.560861,
+      "lat": 11.5227568
+    },
+    {
+      "soHieu": "CAU-035",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.6,
+      "duongKinh": 37,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5610068,
+      "lat": 11.5227673
+    },
+    {
+      "soHieu": "SD-070",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.1,
+      "duongKinh": 39,
+      "namTrong": 2016,
+      "trangThai": "Tốt",
+      "lon": 106.5611535,
+      "lat": 11.5227777
+    },
+    {
+      "soHieu": "SD-071",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.9,
+      "duongKinh": 42,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5608757,
+      "lat": 11.5225583
+    },
+    {
+      "soHieu": "CAU-036",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 15.6,
+      "duongKinh": 34,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5610215,
+      "lat": 11.5225687
+    },
+    {
+      "soHieu": "SD-072",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.8,
+      "duongKinh": 46,
+      "namTrong": 2022,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5611682,
+      "lat": 11.5225792
+    },
+    {
+      "soHieu": "SD-073",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.7,
+      "duongKinh": 42,
+      "namTrong": 2017,
+      "trangThai": "Tốt",
+      "lon": 106.5608905,
+      "lat": 11.5223597
+    },
+    {
+      "soHieu": "CAU-037",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 16.6,
+      "duongKinh": 35,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5610363,
+      "lat": 11.5223701
+    },
+    {
+      "soHieu": "SD-074",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.3,
+      "duongKinh": 43,
+      "namTrong": 2017,
+      "trangThai": "Tốt",
+      "lon": 106.561183,
+      "lat": 11.5223806
+    },
+    {
+      "soHieu": "SD-075",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.5,
+      "duongKinh": 46,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5609052,
+      "lat": 11.5221611
+    },
+    {
+      "soHieu": "CAU-038",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 16.3,
+      "duongKinh": 35,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.561051,
+      "lat": 11.5221715
+    },
+    {
+      "soHieu": "SD-076",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.7,
+      "duongKinh": 37,
+      "namTrong": 2021,
+      "trangThai": "Bình thường",
+      "lon": 106.5611978,
+      "lat": 11.522182
+    },
+    {
+      "soHieu": "SD-077",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.5,
+      "duongKinh": 48,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.56092,
+      "lat": 11.5219626
+    },
+    {
+      "soHieu": "CAU-039",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.1,
+      "duongKinh": 26,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5610658,
+      "lat": 11.521973
+    },
+    {
+      "soHieu": "SD-078",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17,
+      "duongKinh": 54,
+      "namTrong": 2016,
+      "trangThai": "Tốt",
+      "lon": 106.5612125,
+      "lat": 11.5219834
+    },
+    {
+      "soHieu": "SD-079",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.7,
+      "duongKinh": 40,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5609348,
+      "lat": 11.521764
+    },
+    {
+      "soHieu": "CAU-040",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.3,
+      "duongKinh": 33,
+      "namTrong": 2018,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5610806,
+      "lat": 11.5217744
+    },
+    {
+      "soHieu": "SD-080",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.1,
+      "duongKinh": 40,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5612273,
+      "lat": 11.5217849
+    },
+    {
+      "soHieu": "SD-081",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.2,
+      "duongKinh": 51,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5609495,
+      "lat": 11.5215654
+    },
+    {
+      "soHieu": "CAU-041",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 16.3,
+      "duongKinh": 36,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5610953,
+      "lat": 11.5215758
+    },
+    {
+      "soHieu": "SD-082",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.7,
+      "duongKinh": 52,
+      "namTrong": 2016,
+      "trangThai": "Tốt",
+      "lon": 106.5612421,
+      "lat": 11.5215863
+    },
+    {
+      "soHieu": "SD-083",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.3,
+      "duongKinh": 48,
+      "namTrong": 2019,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5609643,
+      "lat": 11.5213668
+    },
+    {
+      "soHieu": "CAU-042",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 15.4,
+      "duongKinh": 28,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5611101,
+      "lat": 11.5213772
+    },
+    {
+      "soHieu": "SD-084",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.9,
+      "duongKinh": 37,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5612568,
+      "lat": 11.5213877
+    },
+    {
+      "soHieu": "SD-085",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.9,
+      "duongKinh": 45,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5609791,
+      "lat": 11.5211683
+    },
+    {
+      "soHieu": "CAU-043",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.7,
+      "duongKinh": 34,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5611249,
+      "lat": 11.5211787
+    },
+    {
+      "soHieu": "SD-086",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.7,
+      "duongKinh": 51,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5612716,
+      "lat": 11.5211891
+    },
+    {
+      "soHieu": "SD-087",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.8,
+      "duongKinh": 50,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5609938,
+      "lat": 11.5209697
+    },
+    {
+      "soHieu": "CAU-044",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.3,
+      "duongKinh": 27,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5611396,
+      "lat": 11.5209801
+    },
+    {
+      "soHieu": "SD-088",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.3,
+      "duongKinh": 37,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5612863,
+      "lat": 11.5209906
+    },
+    {
+      "soHieu": "SD-089",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.6,
+      "duongKinh": 44,
+      "namTrong": 2016,
+      "trangThai": "Tốt",
+      "lon": 106.5610086,
+      "lat": 11.5207711
+    },
+    {
+      "soHieu": "CAU-045",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.2,
+      "duongKinh": 36,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5611544,
+      "lat": 11.5207815
+    },
+    {
+      "soHieu": "SD-090",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.9,
+      "duongKinh": 55,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5613011,
+      "lat": 11.520792
+    },
+    {
+      "soHieu": "SD-091",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.2,
+      "duongKinh": 53,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5610233,
+      "lat": 11.5205725
+    },
+    {
+      "soHieu": "CAU-046",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.1,
+      "duongKinh": 27,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5611691,
+      "lat": 11.520583
+    },
+    {
+      "soHieu": "SD-092",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.5,
+      "duongKinh": 45,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5613159,
+      "lat": 11.5205934
+    },
+    {
+      "soHieu": "SD-093",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.4,
+      "duongKinh": 42,
+      "namTrong": 2020,
+      "trangThai": "Bình thường",
+      "lon": 106.5610381,
+      "lat": 11.520374
+    },
+    {
+      "soHieu": "CAU-047",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 15.7,
+      "duongKinh": 29,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5611839,
+      "lat": 11.5203844
+    },
+    {
+      "soHieu": "SD-094",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.2,
+      "duongKinh": 45,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5613306,
+      "lat": 11.5203948
+    },
+    {
+      "soHieu": "SD-095",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.3,
+      "duongKinh": 37,
+      "namTrong": 2019,
+      "trangThai": "Bình thường",
+      "lon": 106.5610529,
+      "lat": 11.5201754
+    },
+    {
+      "soHieu": "CAU-048",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.5,
+      "duongKinh": 32,
+      "namTrong": 2022,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5611987,
+      "lat": 11.5201858
+    },
+    {
+      "soHieu": "SD-096",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.3,
+      "duongKinh": 53,
+      "namTrong": 2017,
+      "trangThai": "Tốt",
+      "lon": 106.5613454,
+      "lat": 11.5201963
+    },
+    {
+      "soHieu": "SD-097",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.2,
+      "duongKinh": 45,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5610676,
+      "lat": 11.5199768
+    },
+    {
+      "soHieu": "CAU-049",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 17,
+      "duongKinh": 31,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5612134,
+      "lat": 11.5199872
+    },
+    {
+      "soHieu": "SD-098",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.7,
+      "duongKinh": 45,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5613601,
+      "lat": 11.5199977
+    },
+    {
+      "soHieu": "SD-099",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.4,
+      "duongKinh": 35,
+      "namTrong": 2018,
+      "trangThai": "Bình thường",
+      "lon": 106.5610824,
+      "lat": 11.5197783
+    },
+    {
+      "soHieu": "CAU-050",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.3,
+      "duongKinh": 31,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5612282,
+      "lat": 11.5197887
+    },
+    {
+      "soHieu": "SD-100",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.8,
+      "duongKinh": 47,
+      "namTrong": 2017,
+      "trangThai": "Tốt",
+      "lon": 106.5613749,
+      "lat": 11.5197991
+    },
+    {
+      "soHieu": "SD-101",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.5,
+      "duongKinh": 47,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5610971,
+      "lat": 11.5195797
+    },
+    {
+      "soHieu": "CAU-051",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 15.3,
+      "duongKinh": 25,
+      "namTrong": 2020,
+      "trangThai": "Bình thường",
+      "lon": 106.5612429,
+      "lat": 11.5195901
+    },
+    {
+      "soHieu": "SD-102",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.3,
+      "duongKinh": 43,
+      "namTrong": 2020,
+      "trangThai": "Tốt",
+      "lon": 106.5613897,
+      "lat": 11.5196006
+    },
+    {
+      "soHieu": "SD-103",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.5,
+      "duongKinh": 52,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5611119,
+      "lat": 11.5193811
+    },
+    {
+      "soHieu": "CAU-052",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 16.4,
+      "duongKinh": 32,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5612577,
+      "lat": 11.5193915
+    },
+    {
+      "soHieu": "SD-104",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.6,
+      "duongKinh": 42,
+      "namTrong": 2021,
+      "trangThai": "Bình thường",
+      "lon": 106.5614044,
+      "lat": 11.519402
+    },
+    {
+      "soHieu": "SD-105",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.6,
+      "duongKinh": 43,
+      "namTrong": 2016,
+      "trangThai": "Tốt",
+      "lon": 106.5611267,
+      "lat": 11.5191825
+    },
+    {
+      "soHieu": "CAU-053",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 15.2,
+      "duongKinh": 32,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5612725,
+      "lat": 11.5191929
+    },
+    {
+      "soHieu": "SD-106",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.1,
+      "duongKinh": 40,
+      "namTrong": 2020,
+      "trangThai": "Bình thường",
+      "lon": 106.5614192,
+      "lat": 11.5192034
+    },
+    {
+      "soHieu": "SD-107",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.8,
+      "duongKinh": 55,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.5611414,
+      "lat": 11.518984
+    },
+    {
+      "soHieu": "CAU-054",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.9,
+      "duongKinh": 30,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5612872,
+      "lat": 11.5189944
+    },
+    {
+      "soHieu": "SD-108",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.8,
+      "duongKinh": 49,
+      "namTrong": 2017,
+      "trangThai": "Tốt",
+      "lon": 106.561434,
+      "lat": 11.5190048
+    },
+    {
+      "soHieu": "SD-109",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.2,
+      "duongKinh": 52,
+      "namTrong": 2021,
+      "trangThai": "Tốt",
+      "lon": 106.5611562,
+      "lat": 11.5187854
+    },
+    {
+      "soHieu": "CAU-055",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.4,
+      "duongKinh": 35,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.561302,
+      "lat": 11.5187958
+    },
+    {
+      "soHieu": "SD-110",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.5,
+      "duongKinh": 52,
+      "namTrong": 2017,
+      "trangThai": "Tốt",
+      "lon": 106.5614487,
+      "lat": 11.5188063
+    },
+    {
+      "soHieu": "SD-111",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17,
+      "duongKinh": 36,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.561171,
+      "lat": 11.5185868
+    },
+    {
+      "soHieu": "CAU-056",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 15.1,
+      "duongKinh": 29,
+      "namTrong": 2022,
+      "trangThai": "Bình thường",
+      "lon": 106.5613168,
+      "lat": 11.5185972
+    },
+    {
+      "soHieu": "SD-112",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 17.3,
+      "duongKinh": 48,
+      "namTrong": 2017,
+      "trangThai": "Cần chăm sóc",
+      "lon": 106.5614635,
+      "lat": 11.5186077
+    },
+    {
+      "soHieu": "SD-113",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.7,
+      "duongKinh": 54,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5611857,
+      "lat": 11.5183882
+    },
+    {
+      "soHieu": "CAU-057",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 15.4,
+      "duongKinh": 30,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5613315,
+      "lat": 11.5183986
+    },
+    {
+      "soHieu": "SD-114",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 19,
+      "duongKinh": 40,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5614782,
+      "lat": 11.5184091
+    },
+    {
+      "soHieu": "SD-115",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.1,
+      "duongKinh": 50,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.5612005,
+      "lat": 11.5181897
+    },
+    {
+      "soHieu": "CAU-058",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14,
+      "duongKinh": 28,
+      "namTrong": 2021,
+      "trangThai": "Bình thường",
+      "lon": 106.5613463,
+      "lat": 11.5182001
+    },
+    {
+      "soHieu": "SD-116",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.6,
+      "duongKinh": 38,
+      "namTrong": 2018,
+      "trangThai": "Tốt",
+      "lon": 106.561493,
+      "lat": 11.5182105
+    },
+    {
+      "soHieu": "SD-117",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 18.6,
+      "duongKinh": 53,
+      "namTrong": 2019,
+      "trangThai": "Tốt",
+      "lon": 106.5612152,
+      "lat": 11.5179911
+    },
+    {
+      "soHieu": "CAU-059",
+      "tenLoai": "Cây Cau Vua",
+      "chieuCao": 14.6,
+      "duongKinh": 37,
+      "namTrong": 2022,
+      "trangThai": "Tốt",
+      "lon": 106.561361,
+      "lat": 11.5180015
+    },
+    {
+      "soHieu": "SD-118",
+      "tenLoai": "Cây Sao Đen",
+      "chieuCao": 16.1,
+      "duongKinh": 39,
+      "namTrong": 2016,
+      "trangThai": "Tốt",
+      "lon": 106.5615078,
+      "lat": 11.518012
     }
   ]
 }

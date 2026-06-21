@@ -71,6 +71,7 @@ export async function addBuilding3D(viewer, {
   wallColor,
   roofColor,
   groundH = null,
+  id = undefined, // gắn vào GeometryInstance để scene.pick nhận diện được khối khi click
 }) {
   const scene = viewer.scene;
 
@@ -94,6 +95,7 @@ export async function addBuilding3D(viewer, {
   const wallPrim = scene.primitives.add(
     new Cesium.Primitive({
       geometryInstances: new Cesium.GeometryInstance({
+        id,
         geometry: new Cesium.WallGeometry({
           positions:      ring.map(([lon, lat]) => Cesium.Cartesian3.fromDegrees(lon, lat, baseH)),
           maximumHeights: ring.map(() => topH),
@@ -116,6 +118,7 @@ export async function addBuilding3D(viewer, {
   const roofPrim = scene.primitives.add(
     new Cesium.Primitive({
       geometryInstances: new Cesium.GeometryInstance({
+        id,
         geometry: new Cesium.PolygonGeometry({
           polygonHierarchy: new Cesium.PolygonHierarchy(
             polygon.map(([lon, lat]) => Cesium.Cartesian3.fromDegrees(lon, lat, topH))
