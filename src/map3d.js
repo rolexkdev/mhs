@@ -10,8 +10,9 @@ const LAT_M = 111000;
 // Chỉ tập trung 2 loài trước. Mỗi loài có `shape` để treelayer dựng đúng dáng:
 //   cone = cây tán nón (sao đen);  palm = cau vua (thân cao mảnh + tán xòe).
 const TREE_TYPES = {
-  "Cây Sao Đen":  { color: "#1B5E20", trunkColor: "#4D3321", prefix: "SD",  model: "models/caysaoden.glb" },
-  "Cây Cau Vua":  { color: "#2E7D32", trunkColor: "#9E9E9E", prefix: "CAU", model: "models/cauvua.glb" },
+  // image = ảnh billboard 2.5D (PNG nền trong suốt) thay cho model glb nặng.
+  "Cây Sao Đen":  { color: "#1B5E20", trunkColor: "#4D3321", prefix: "SD",  image: "models/caysaoden.png" },
+  "Cây Cau Vua":  { color: "#2E7D32", trunkColor: "#9E9E9E", prefix: "CAU", image: "models/caycau.png" },
 };
 
 // Companies with surveyed lot-boundary polygons — drawn from actual coordinates
@@ -49,6 +50,18 @@ const ROOF_COLORS = {
 
 // Cây ở xa hơn ngưỡng này (mét) sẽ không được vẽ — cắt draw call khi zoom out.
 const TREE_VIEW_DISTANCE = 4000.0;
+
+// Chiều cao tự nhiên (px) của từng ảnh billboard — preload 1 lần để tính scale theo mét.
+const treeImgH = new Map();
+function preloadTreeImages() {
+  const imgs = [...new Set(Object.values(TREE_TYPES).map(c => c.image).filter(Boolean))];
+  return Promise.all(imgs.map(src => new Promise(res => {
+    const im = new Image();
+    im.onload  = () => { treeImgH.set(src, im.naturalHeight); res(); };
+    im.onerror = () => { res(); }; // ảnh chưa có (vd sao đen) → bỏ qua, dùng mặc định
+    im.src = src;
+  })));
+}
 
 let treesData = [];
 let addModeSpecies  = null;
@@ -231,24 +244,27 @@ function nextSoHieu(species) {
   return `${prefix}-${String(maxNum + 1).padStart(3, "0")}`;
 }
 
-// Render 1 cây bằng model glb thật. Model bbox cao 2 đơn vị, gốc ở giữa → base ở
-// Y=-1; đặt cao = scale (=1*scale) + RELATIVE_TO_GROUND để gốc chạm terrain.
+// Render 1 cây bằng billboard 2.5D: 1 tấm ảnh PNG luôn quay về camera (sprite).
+// Nhẹ hơn model glb rất nhiều (1 quad/cây thay vì hàng trăm nghìn tam giác).
+// sizeInMeters → ảnh co giãn theo thế giới như vật thể thật; verticalOrigin BOTTOM
+// + CLAMP_TO_GROUND → gốc cây chạm mặt đất. Vẫn pick/kéo/xem info như entity thường.
 function renderTree(t) {
   const cfg = TREE_TYPES[t.tenLoai];
-  if (!cfg?.model || !viewer) return;
-  const scale = (t.chieuCao || 16) / 2;
+  if (!cfg?.image || !viewer) return;
+  const h = t.chieuCao || 16;                       // chiều cao thật (m)
+  const imgH = treeImgH.get(cfg.image) || 1536;     // số pixel cao của ảnh (đã preload)
   const e = viewer.entities.add({
     name: `${t.tenLoai} — ${t.soHieu}`,
     description: treeDesc(t),
-    position: Cesium.Cartesian3.fromDegrees(+t.lon, +t.lat, scale),
-    model: {
-      uri: cfg.model, scale, minimumPixelSize: 24,
-      heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
-      // Không vẽ cây khi camera ở rất xa (xem toàn KCN từ trên cao) → cắt phần
-      // lớn draw call lúc zoom out. Trong tầm này cây vẫn vẽ bình thường.
+    position: Cesium.Cartesian3.fromDegrees(+t.lon, +t.lat, 0),
+    billboard: {
+      image: cfg.image,
+      sizeInMeters: true,        // kích thước tính bằng mét → co giãn theo zoom
+      scale: h / imgH,           // ảnh cao đúng h mét
+      verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+      heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+      // Không vẽ cây khi camera ở rất xa (xem toàn KCN) → cắt tải lúc zoom out.
       distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, TREE_VIEW_DISTANCE),
-      // Cây không đổ bóng: 600 model đổ bóng = thêm 1 shadow-pass mỗi cây, rất nặng.
-      shadows: Cesium.ShadowMode.DISABLED,
     },
   });
   e._treeKey = t.soHieu;
@@ -1240,6 +1256,17 @@ export async function load3D() {
       viewer.scene.requestRenderMode = true;
       viewer.scene.maximumRenderTimeChange = Infinity;
 
+      // Khi đang drag/zoom (camera di chuyển), hạ độ phân giải để mỗi frame nhẹ hơn
+      // → kéo/zoom mượt dù có nhiều glb nặng; camera dừng thì trả về nét tối đa.
+      // Dùng sự kiện moveStart/moveEnd của Cesium, không cần RAF thủ công.
+      const FULL_RES = viewer.scene.pixelRatio || 1;
+      const MOVE_RES = FULL_RES * 0.55;
+      viewer.camera.moveStart.addEventListener(() => { viewer.scene.pixelRatio = MOVE_RES; });
+      viewer.camera.moveEnd.addEventListener(() => {
+        viewer.scene.pixelRatio = FULL_RES;
+        viewer.scene.requestRender(); // vẽ lại 1 frame ở độ phân giải đầy đủ khi dừng
+      });
+
       // Thay handler LEFT_CLICK mặc định: click cây/nhà xưởng (entity) → InfoBox;
       // click trống → bỏ chọn. Gác lại khi đang ở mode sửa/thêm/vẽ/lấy-tọa-độ.
       viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -1293,6 +1320,7 @@ export async function load3D() {
       const savedData = await loadData();
       addAllPolyBuildings(savedData.buildings);
       const treeNeedsSave = await addTrees(savedData.trees);
+      await preloadTreeImages(); // lấy kích thước ảnh billboard trước khi dựng cây
       await rebuildTreeLayer();
       loaded = true;
       buildTreePanel();
