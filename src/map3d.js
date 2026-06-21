@@ -47,6 +47,9 @@ const ROOF_COLORS = {
   "Hạ tầng KCN":        "#BDBDBD",
 };
 
+// Cây ở xa hơn ngưỡng này (mét) sẽ không được vẽ — cắt draw call khi zoom out.
+const TREE_VIEW_DISTANCE = 4000.0;
+
 let treesData = [];
 let addModeSpecies  = null;
 let addHandler      = null;
@@ -239,8 +242,13 @@ function renderTree(t) {
     description: treeDesc(t),
     position: Cesium.Cartesian3.fromDegrees(+t.lon, +t.lat, scale),
     model: {
-      uri: cfg.model, scale, minimumPixelSize: 40,
+      uri: cfg.model, scale, minimumPixelSize: 24,
       heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+      // Không vẽ cây khi camera ở rất xa (xem toàn KCN từ trên cao) → cắt phần
+      // lớn draw call lúc zoom out. Trong tầm này cây vẫn vẽ bình thường.
+      distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, TREE_VIEW_DISTANCE),
+      // Cây không đổ bóng: 600 model đổ bóng = thêm 1 shadow-pass mỗi cây, rất nặng.
+      shadows: Cesium.ShadowMode.DISABLED,
     },
   });
   e._treeKey = t.soHieu;
