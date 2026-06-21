@@ -51,11 +51,9 @@ const ROOF_COLORS = {
 // Cây ở xa hơn ngưỡng này (mét) sẽ không được vẽ — cắt draw call khi zoom out.
 const TREE_VIEW_DISTANCE = 4000.0;
 
-// Cột đèn đường: billboard ảnh, đặt cạnh hàng Sao Đen, cứ 3 cây 1 cột.
+// Cột đèn đường: billboard ảnh; vị trí sinh sẵn trong lamps[] (xem scripts/gen-sao-den.mjs).
 const LAMP_IMG = "models/cotden.png";
 const LAMP_HEIGHT = 17;    // chiều cao cột đèn (m) — ~ngang cây Sao Đen (~17.6m)
-const LAMP_EVERY = 3;      // 3 cây sao đen → 1 cột
-const LAMP_INSET = 4;      // cột lệch từ hàng cây về phía đường bao nhiêu mét (sát lề trong)
 
 // Chiều cao tự nhiên (px) của từng ảnh billboard — preload 1 lần để tính scale theo mét.
 const treeImgH = new Map();
@@ -287,22 +285,18 @@ function rebuildTreeLayer() {
   viewer.scene.requestRender();
 }
 
-// Dựng 2 hàng cột đèn billboard song song 2 bên đường (đối xứng qua tim đại lộ),
-// cứ LAMP_EVERY cây Sao Đen 1 cột, đặt vào GIỮA 2 cây cho khỏi bị cây che.
+// Cột đèn: vị trí do scripts/gen-sao-den.mjs sinh sẵn theo tim đường (2 hàng dọc đường,
+// uốn theo khúc cong) → lưu trong lamps[] của data, ở đây chỉ việc dựng billboard.
+let lampsData = [];
 let lampEntities = [];
 function renderLamps() {
   for (const e of lampEntities) viewer.entities.remove(e);
   lampEntities = [];
-  const A = [106.560416, 11.529871], B = [106.561345, 11.517374]; // trục đại lộ
-  const M = 111000, cosL = Math.cos(11.523 * Math.PI / 180);
-  const dx = (B[0] - A[0]) * cosL, dy = B[1] - A[1], len = Math.hypot(dx, dy);
-  const ux = dx / len, uy = dy / len, px = -uy, py = ux; // dọc & vuông góc đại lộ
   const imgH = treeImgH.get(LAMP_IMG) || 1536;
-  const addLamp = (s, off) => {
-    const ex = (ux * s + px * off) / M, ey = (uy * s + py * off) / M;
+  for (const lp of lampsData) {
     const e = viewer.entities.add({
       name: "Cột đèn đường",
-      position: Cesium.Cartesian3.fromDegrees(A[0] + ex / cosL, A[1] + ey, 0),
+      position: Cesium.Cartesian3.fromDegrees(lp.lon, lp.lat, 0),
       billboard: {
         image: LAMP_IMG, sizeInMeters: true, scale: LAMP_HEIGHT / imgH,
         verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
@@ -310,25 +304,17 @@ function renderLamps() {
         distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0.0, TREE_VIEW_DISTANCE),
       },
     });
+    e._lamp = lp;
     lampEntities.push(e);
-  };
-  // 2 hàng Sao Đen (Tây offset âm, Đông offset dương lớn). Mỗi hàng đặt 1 dãy cột
-  // đèn lệch LAMP_INSET mét về phía đường (sát lề trong của chính hàng cây đó).
-  const sao = treesData
-    .filter(t => t.tenLoai === "Cây Sao Đen")
-    .map(t => { const ex = (t.lon - A[0]) * cosL, ey = t.lat - A[1];
-      return { s: (ex * ux + ey * uy) * M, o: (ex * px + ey * py) * M }; });
-  const west = sao.filter(p => p.o < 0).sort((a, b) => a.s - b.s);
-  const east = sao.filter(p => p.o > 15).sort((a, b) => a.s - b.s);
-  const rowOff = arr => arr.reduce((s, p) => s + p.o, 0) / arr.length; // offset trung bình hàng cây
-  const placeRow = (arr, off) => {
-    for (let i = 0; i < arr.length; i += LAMP_EVERY) {
-      const s = (i + 1 < arr.length) ? (arr[i].s + arr[i + 1].s) / 2 : arr[i].s + 11;
-      addLamp(s, off);
-    }
-  };
-  if (west.length) placeRow(west, rowOff(west) + LAMP_INSET); // hàng cây ~-9 → cột ~-5 (về phía đường)
-  if (east.length) placeRow(east, rowOff(east) - LAMP_INSET); // hàng cây ~+23 → cột ~+19 (về phía đường)
+  }
+}
+
+// Xóa 1 cột đèn (click trong chế độ xóa / chuột phải) → bỏ khỏi lamps[] rồi lưu.
+function deleteLamp(lp) {
+  const i = lampsData.indexOf(lp);
+  if (i >= 0) lampsData.splice(i, 1);
+  renderLamps();
+  saveData();
 }
 
 // Vẽ lại 1 cây (sau khi di chuyển).
@@ -459,8 +445,8 @@ let polyEntities  = new Map();
 async function loadData() {
   // trees: null = chưa có trong file (sẽ load từ cay.geojson), [] = đã lưu nhưng không có cây
   const parse = raw => Array.isArray(raw)
-    ? { buildings: raw, trees: null }
-    : { buildings: raw.buildings || [], trees: "trees" in raw ? raw.trees : null };
+    ? { buildings: raw, trees: null, lamps: [] }
+    : { buildings: raw.buildings || [], trees: "trees" in raw ? raw.trees : null, lamps: raw.lamps || [] };
 
   try {
     const r = await fetch("/data/mhs_buildings.json?t=" + Date.now());
@@ -481,6 +467,7 @@ async function saveData() {
     trees: treesData.map(({ soHieu, tenLoai, chieuCao, duongKinh, namTrong, trangThai, lon, lat }) =>
       ({ soHieu, tenLoai, chieuCao, duongKinh, namTrong, trangThai, lon, lat })
     ),
+    lamps: lampsData,
   };
   try {
     const r = await fetch("/api/save", { method: "POST",
@@ -886,7 +873,9 @@ function setupEdHandler() {
       }
       if (!p?.id) return;
       const e = p.id;
-      if (e._isHnd && e._hndType === "vert") {
+      if (e._lamp) {
+        if (confirm("Xóa cột đèn này?")) deleteLamp(e._lamp);
+      } else if (e._isHnd && e._hndType === "vert") {
         const { _vi, _pi } = e;
         if (polyBuildings[_pi].polygon.length <= 3) return;
         polyBuildings[_pi].polygon.splice(_vi, 1);
@@ -952,7 +941,9 @@ function setupEdHandler() {
       if (treeId) { if (confirm(`Xóa cây "${treeId}"?`)) deleteTree(treeId); return; }
       if (!p?.id) return;
       const e = p.id;
-      if (e._polyKey) {
+      if (e._lamp) {
+        if (confirm("Xóa cột đèn này?")) deleteLamp(e._lamp);
+      } else if (e._polyKey) {
         const idx = polyBuildings.findIndex(b => b.tenCty === e._polyKey);
         if (idx >= 0 && confirm(`Xóa "${polyBuildings[idx].tenCty}"?`)) { removePolyBuilding(idx); clearHandles(); }
       } else if (e._ptKey) {
@@ -1104,6 +1095,7 @@ async function exportBuildings() {
     trees: treesData.map(({ soHieu, tenLoai, chieuCao, duongKinh, namTrong, trangThai, lon, lat }) =>
       ({ soHieu, tenLoai, chieuCao, duongKinh, namTrong, trangThai, lon, lat })
     ),
+    lamps: lampsData,
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: "mhs_buildings.json" });
@@ -1370,6 +1362,7 @@ export async function load3D() {
       await addRoads(viewer);
       const savedData = await loadData();
       addAllPolyBuildings(savedData.buildings);
+      lampsData = savedData.lamps || [];
       const treeNeedsSave = await addTrees(savedData.trees);
       await preloadTreeImages(); // lấy kích thước ảnh billboard trước khi dựng cây
       await rebuildTreeLayer();
