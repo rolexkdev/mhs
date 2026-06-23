@@ -2,3 +2,7 @@ node_modules
 dist
 # Bỏ comment dòng dưới nếu KHÔNG muốn commit dữ liệu đã tải về:
 # public/data/*.geojson
+
+# macOS / artifacts
+.DS_Store
+screenshot_lighting.png

@@ -1,7 +1,7 @@
 import L from "leaflet";
 import Chart from "chart.js/auto";
 import { LAYERS, BASEMAP, sourceUrl, MODE, CAMERA_3D } from "./config.js";
-import { hideTreePanel } from "./map3d.js";
+import { hideTreePanel } from "./map3d/index.js";
 
 let map, overlayGroup, layerControl=null, chartObj=null, basemapLayers=[];
 const status = () => document.getElementById("status");

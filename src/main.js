@@ -2,7 +2,7 @@ import "leaflet/dist/leaflet.css";
 import "./style.css";
 import { PAGES } from "./config.js";
 import { initMap, load2D } from "./map2d.js";
-import { load3D } from "./map3d.js";
+import { load3D } from "./map3d/index.js";
 
 initMap();
 

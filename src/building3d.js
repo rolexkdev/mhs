@@ -149,26 +149,3 @@ export function removeBuilding3D(scene, building) {
   if (building.wallPrim) scene.primitives.remove(building.wallPrim);
   if (building.roofPrim) scene.primitives.remove(building.roofPrim);
 }
-
-/**
- * Render ALL buildings from the polyBuildings array.
- * Returns a Map<tenCty, {wallPrim, roofPrim, groundH}> for later cleanup.
- *
- * roofColorFn: (loaiHinh: string) => Cesium.Color
- */
-export async function renderAllBuildings(viewer, buildings, roofColorFn) {
-  const WALL_COLOR = Cesium.Color.fromCssColorString("#F0F0F0").withAlpha(0.95);
-
-  const map = new Map();
-  for (const b of buildings) {
-    const roofColor = roofColorFn(b.loaiHinh);
-    const result = await addBuilding3D(viewer, {
-      polygon:   b.polygon,
-      height:    b.height || 16,
-      wallColor: WALL_COLOR,
-      roofColor,
-    });
-    map.set(b.tenCty, result);
-  }
-  return map;
-}
