@@ -20,30 +20,56 @@
 import * as Cesium from "cesium";
 import { acquire, release } from "./interactionLock.js";
 import { rectCorners } from "./geo.js";
+import { snapAt, clearSnap } from "./snap.js";
+import { orthoSnap, isOrthoLock } from "./ortho.js";
+import { showMeasure, hideMeasure, segMeters, turnAngle, fmtLen } from "./measure.js";
+
+/**
+ * Giải điểm con trỏ khi vẽ đa giác/đường: BẮT ĐỈNH trước (snap.js), không dính
+ * đỉnh nào thì CĂN THẲNG (ortho.js). Trả {lon,lat,vsnap,ortho} hoặc null.
+ */
+function snapPoint(ctx, verts, windowPos) {
+  const raw = ctx.pickGround(windowPos);
+  if (!raw) return null;
+  const v = snapAt(windowPos, raw);
+  if (v && v.snapped) return { lon: v.lon, lat: v.lat, vsnap: true, ortho: false };
+  const o = orthoSnap(verts, raw);
+  return { lon: o.lon, lat: o.lat, vsnap: false, ortho: !!o.snapped };
+}
+
+/** Badge căn thẳng cho tooltip số đo (⟂ tự hít · 🔒 khóa Shift). */
+function orthoBadge(p) {
+  return p?.ortho ? `<span class="mt-ortho">⟂${isOrthoLock() ? " 🔒" : ""}</span>` : "";
+}
 
 const ORANGE = { pixelSize: 10, color: Cesium.Color.ORANGE, outlineColor: Cesium.Color.WHITE, outlineWidth: 2 };
 const LIME   = { pixelSize: 12, color: Cesium.Color.LIME, outlineColor: Cesium.Color.BLACK, outlineWidth: 2 };
 
 /** Thêm 1 chấm marker ở lon/lat, cao 20 m, luôn nổi trên mặt. */
 function addDot(viewer, lon, lat, style) {
-  return viewer.entities.add({
+  const e = viewer.entities.add({
     position: Cesium.Cartesian3.fromDegrees(lon, lat, 20),
     point: { ...style, disableDepthTestDistance: Number.POSITIVE_INFINITY },
   });
+  viewer.scene.requestRender();   // requestRenderMode: phải xin vẽ lại 1 frame
+  return e;
 }
 
 /** Vẽ/cập nhật 1 polyline preview màu cam. Trả về entity để tái dùng. */
 function previewLine(viewer, ent, corners, closed) {
   const positions = corners.map(([lon, lat]) => Cesium.Cartesian3.fromDegrees(lon, lat, 20));
   if (closed && corners.length >= 3) positions.push(positions[0]);
-  if (ent) { ent.polyline.positions = new Cesium.ConstantProperty(positions); return ent; }
-  return viewer.entities.add({
-    polyline: {
-      positions: new Cesium.ConstantProperty(positions),
-      width: 2.5,
-      material: new Cesium.ColorMaterialProperty(Cesium.Color.ORANGE.withAlpha(0.85)),
-    },
-  });
+  const out = ent
+    ? (ent.polyline.positions = new Cesium.ConstantProperty(positions), ent)
+    : viewer.entities.add({
+        polyline: {
+          positions: new Cesium.ConstantProperty(positions),
+          width: 2.5,
+          material: new Cesium.ColorMaterialProperty(Cesium.Color.ORANGE.withAlpha(0.85)),
+        },
+      });
+  viewer.scene.requestRender();   // cập nhật preview liên tục khi kéo chuột
+  return out;
 }
 
 // ── placePoint ────────────────────────────────────────────────────────────────
@@ -76,6 +102,7 @@ export function drawPolygon(ctx, { onFinish, onHint }) {
     dots.forEach((d) => viewer.entities.remove(d));
     if (line) viewer.entities.remove(line);
     verts = []; dots = []; line = null;
+    clearSnap(); hideMeasure();
   };
   const stop = () => { handler.destroy(); viewer.canvas.style.cursor = ""; reset(); release("drawPolygon"); };
   acquire("drawPolygon", stop);
@@ -94,7 +121,7 @@ export function drawPolygon(ctx, { onFinish, onHint }) {
   };
 
   handler.setInputAction((evt) => {
-    const pos = ctx.pickGround(evt.position); if (!pos) return;
+    const pos = snapAt(evt.position, ctx.pickGround(evt.position)); if (!pos) return;
     verts.push([pos.lon, pos.lat]);
     dots.push(addDot(viewer, pos.lon, pos.lat, ORANGE));
     preview(); hint();
@@ -108,8 +135,76 @@ export function drawPolygon(ctx, { onFinish, onHint }) {
   }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
   handler.setInputAction((evt) => {
-    if (verts.length === 0) return;
-    const pos = ctx.pickGround(evt.position); if (pos) preview(pos);
+    const pos = snapAt(evt.endPosition, ctx.pickGround(evt.endPosition));
+    if (!pos) return;
+    if (verts.length === 0) { hideMeasure(); return; }
+    preview(pos);
+    // Số đo: chiều dài cạnh đang kéo + góc tại đỉnh trước (nếu có).
+    const last = verts[verts.length - 1];
+    const len = segMeters(last, [pos.lon, pos.lat]);
+    let html = `<b>${fmtLen(len)}</b>`;
+    if (verts.length >= 2) {
+      const a = turnAngle(verts[verts.length - 2], last, [pos.lon, pos.lat]);
+      html += `<span class="mt-ang">${a}°</span>`;
+    }
+    showMeasure(evt.endPosition, html);
+  }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+  hint();
+  return stop;
+}
+
+// ── drawLine ────────────────────────────────────────────────────────────────
+/** Vẽ đường gấp khúc MỞ: click từng điểm, double-click để hoàn thành (≥2 điểm). */
+export function drawLine(ctx, { onFinish, onHint }) {
+  const { viewer } = ctx;
+  let verts = [], dots = [], line = null;
+  viewer.canvas.style.cursor = "crosshair";
+  const handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+
+  const reset = () => {
+    dots.forEach((d) => viewer.entities.remove(d));
+    if (line) viewer.entities.remove(line);
+    verts = []; dots = []; line = null;
+    clearSnap(); hideMeasure();
+  };
+  const stop = () => { handler.destroy(); viewer.canvas.style.cursor = ""; reset(); release("drawLine"); };
+  acquire("drawLine", stop);
+
+  const preview = (mouse) => {
+    const v = mouse ? [...verts, [mouse.lon, mouse.lat]] : [...verts];
+    if (v.length < 2) return;
+    line = previewLine(viewer, line, v, false);   // false = đường mở, không khép kín
+  };
+  const hint = () => {
+    if (!onHint) return;
+    const n = verts.length;
+    onHint(n === 0 ? "Click điểm đầu của đường · Giữ Shift = căn thẳng/90°"
+      : n < 2 ? "Click điểm tiếp theo · Shift căn thẳng · Esc hủy"
+      : `${n} điểm — Double-click để hoàn thành · Shift căn thẳng · Esc hủy`);
+  };
+
+  handler.setInputAction((evt) => {
+    const pos = snapPoint(ctx, verts, evt.position); if (!pos) return;
+    verts.push([pos.lon, pos.lat]);
+    dots.push(addDot(viewer, pos.lon, pos.lat, ORANGE));
+    preview(); hint();
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+  handler.setInputAction(() => {
+    // double-click vừa thêm 1 điểm ở single-click trước → bỏ điểm dư đó
+    if (verts.length > 0) { verts.pop(); const d = dots.pop(); if (d) viewer.entities.remove(d); }
+    if (verts.length >= 2) { const result = [...verts]; reset(); hint(); onFinish(result, stop); }
+    else hint();
+  }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+
+  handler.setInputAction((evt) => {
+    const pos = snapPoint(ctx, verts, evt.endPosition);
+    if (!pos) return;
+    if (verts.length === 0) { hideMeasure(); return; }
+    preview(pos);
+    const last = verts[verts.length - 1];
+    showMeasure(evt.endPosition, `<b>${fmtLen(segMeters(last, [pos.lon, pos.lat]))}</b>${orthoBadge(pos)}`);
   }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
   hint();
@@ -128,6 +223,7 @@ export function drawRect(ctx, { onFinish, onHint }) {
     dots.forEach((d) => viewer.entities.remove(d));
     if (line) viewer.entities.remove(line);
     p1 = null; p2 = null; dots = []; line = null;
+    clearSnap(); hideMeasure();
   };
   const stop = () => { handler.destroy(); viewer.canvas.style.cursor = ""; reset(); release("drawRect"); };
   acquire("drawRect", stop);
@@ -139,7 +235,7 @@ export function drawRect(ctx, { onFinish, onHint }) {
   );
 
   handler.setInputAction((evt) => {
-    const pos = ctx.pickGround(evt.position); if (!pos) return;
+    const pos = snapAt(evt.position, ctx.pickGround(evt.position)); if (!pos) return;
     if (!p1)      { p1 = pos; dots.push(addDot(viewer, pos.lon, pos.lat, ORANGE)); }
     else if (!p2) { p2 = pos; dots.push(addDot(viewer, pos.lon, pos.lat, ORANGE)); }
     else          { const corners = rectCorners(p1, p2, pos); reset(); onFinish(corners, stop); return; }
@@ -147,9 +243,17 @@ export function drawRect(ctx, { onFinish, onHint }) {
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
   handler.setInputAction((evt) => {
-    const pos = ctx.pickGround(evt.position); if (!pos) return;
-    if (p1 && !p2)     line = previewLine(viewer, line, [[p1.lon, p1.lat], [pos.lon, pos.lat]], false);
-    else if (p1 && p2) line = previewLine(viewer, line, rectCorners(p1, p2, pos), true);
+    const pos = snapAt(evt.endPosition, ctx.pickGround(evt.endPosition)); if (!pos) return;
+    if (p1 && !p2) {
+      line = previewLine(viewer, line, [[p1.lon, p1.lat], [pos.lon, pos.lat]], false);
+      showMeasure(evt.endPosition, `Cạnh <b>${fmtLen(segMeters(p1, pos))}</b>`);
+    } else if (p1 && p2) {
+      const corners = rectCorners(p1, p2, pos);
+      line = previewLine(viewer, line, corners, true);
+      const w = segMeters(corners[0], corners[1]);
+      const d = segMeters(corners[1], corners[2]);
+      showMeasure(evt.endPosition, `<b>${fmtLen(w)}</b> × <b>${fmtLen(d)}</b>`);
+    }
   }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
   hint();

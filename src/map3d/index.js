@@ -20,8 +20,12 @@ import { loadRaw, save } from "./store.js";
 import { addRoads } from "./roads.js";
 import { ENTITY_TYPES } from "./entities/registry.js";
 import { tree } from "./entities/tree.js";
-import { initEditor, mountEditor, refreshButtons } from "./editor.js";
+import { building } from "./entities/building.js";
+import { initEditor, mountEditor, refreshButtons, refreshUndoButtons } from "./editor.js";
 import { cancelActive } from "./interactionLock.js";
+import { initSnap } from "./snap.js";
+import { initHighlight } from "./highlight.js";
+import { initHistory, record } from "./history.js";
 
 let viewer = null, ctx = null, loaded = false, escAttached = false;
 
@@ -38,6 +42,8 @@ export async function load3D() {
     if (!viewer) {
       viewer = await createViewer();
       ctx = createContext(viewer);
+      initSnap(ctx);
+      initHighlight(ctx);
       ENTITY_TYPES.forEach((e) => e.init(ctx));
       initEditor(ctx);
     }
@@ -63,6 +69,10 @@ export async function load3D() {
       }
       for (const e of ENTITY_TYPES) await e.renderAll();
       for (const e of ENTITY_TYPES) e.panel?.build();
+
+      // Undo/redo cho nhà xưởng: lấy mốc xuất phát sau khi đã nạp xong.
+      ctx.recordHistory = record;
+      initHistory({ getState: building.getState, setState: building.setState, onChange: refreshUndoButtons });
 
       loaded = true;
       if (needsSave) save(); // lần đầu: migrate dữ liệu seed (vd cây từ cay.geojson)

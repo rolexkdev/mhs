@@ -1,21 +1,24 @@
 /**
- * store.js — Lưu / đọc dữ liệu các thực thể (1 nguồn sự thật duy nhất).
+ * store.js — Lưu / đọc dữ liệu các thực thể trên Supabase Postgres.
  *
- * Toàn bộ thực thể được lưu chung trong public/data/mhs_buildings.json dạng:
- *   { "buildings": [...], "trees": [...] }   // mỗi key = dataKey của 1 entity type
+ * Bảng public.collections (xem supabase/schema.sql): mỗi loại thực thể = 1 dòng
+ *   { data_key: "trees", items: [ … ] }
  *
- * - Mỗi entity type "đăng ký" 1 collection (mảng instance đang sống) + hàm serialize.
- * - save() gom tất cả collection lại, gọi serialize từng cái, POST về /api/save.
- *   (Vite middleware ghi đè file — xem vite.config.js. Có fallback localStorage.)
+ * - Mỗi entity "đăng ký" 1 collection (mảng instance sống) + hàm serialize.
+ * - loadRaw() đọc tất cả dòng → trả { buildings:[…], trees:[…], lamps:[…] }.
+ * - save() gom mọi collection rồi UPSERT từng dòng (cần đăng nhập — RLS chặn khách).
  *
- * ⚠ File mhs_buildings.json chứa DỮ LIỆU THẬT. save() ghi đè toàn bộ file.
+ * Đổi nơi lưu (file → DB → API…) CHỈ cần sửa file này; entity không phải đụng tới.
  */
+import { supabase } from "../supabase.js";
 
 const collections = new Map();  // dataKey -> { items: [], serialize: fn }
 
+const setStatus = (msg) => { const el = document.getElementById("status"); if (el) el.textContent = msg; };
+
 /**
  * Đăng ký 1 collection cho 1 entity type.
- * @param {string} dataKey   khóa trong file JSON (vd "trees", "buildings")
+ * @param {string} dataKey   khóa trong DB (vd "trees", "buildings")
  * @param {(inst)=>object} serialize  chuyển 1 instance về object JSON thuần
  * @returns {Array} mảng items "sống" — entity giữ tham chiếu này để thêm/xóa
  */
@@ -24,44 +27,47 @@ export function registerCollection(dataKey, serialize) {
   return collections.get(dataKey).items;
 }
 
-/** Chuẩn hóa dữ liệu cũ: file từng là mảng buildings thuần (không có key trees). */
-function normalize(raw) {
-  if (Array.isArray(raw)) return { buildings: raw, trees: null };
-  return { buildings: raw.buildings || [], trees: "trees" in raw ? raw.trees : null };
-}
-
 /**
- * Đọc toàn bộ dữ liệu đã lưu.
- * @returns {object|null} { buildings, trees, … } hoặc null nếu chưa có ở đâu cả.
- *   Lưu ý: 1 key = null nghĩa là "chưa từng lưu" (entity sẽ tự seed dữ liệu mặc định).
+ * Đọc toàn bộ dữ liệu đã lưu từ Supabase.
+ * @returns {object|null} { buildings, trees, … } hoặc null nếu chưa có / lỗi.
+ *   1 key vắng mặt = "chưa từng lưu" (entity sẽ tự seed dữ liệu mặc định).
  */
 export async function loadRaw() {
   try {
-    const r = await fetch("/data/mhs_buildings.json?t=" + Date.now());
-    if (r.ok) return normalize(await r.json());
-  } catch (e) {}
-  try {
-    const s = localStorage.getItem("mhs_buildings");
-    if (s) return normalize(JSON.parse(s));
-  } catch (e) {}
-  return null;
+    const { data, error } = await supabase.from("collections").select("data_key, items");
+    if (error) throw error;
+    if (!data || !data.length) return null;
+    const out = {};
+    for (const row of data) out[row.data_key] = row.items;
+    return out;
+  } catch (e) {
+    console.warn("[store] loadRaw lỗi:", e.message);
+    setStatus("⚠ Không tải được dữ liệu từ Supabase: " + e.message);
+    return null;
+  }
 }
 
-/** Gom mọi collection → payload → POST /api/save (fallback localStorage). */
+/** Gom mọi collection → UPSERT lên Supabase. Cần đăng nhập (RLS). */
 export async function save() {
   const payload = {};
+  const rows = [];
   for (const [dataKey, { items, serialize }] of collections) {
-    payload[dataKey] = items.map(serialize);
+    const ser = items.map(serialize);
+    payload[dataKey] = ser;
+    rows.push({ data_key: dataKey, items: ser });
   }
-  try {
-    const r = await fetch("/api/save", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (r.ok) return payload;
-  } catch (e) {}
-  try { localStorage.setItem("mhs_buildings", JSON.stringify(payload)); } catch (e) {}
+
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    setStatus("⚠ Chưa đăng nhập — thay đổi KHÔNG được lưu lên server. Bấm “Đăng nhập”.");
+    return payload;
+  }
+
+  const { error } = await supabase.from("collections").upsert(rows, { onConflict: "data_key" });
+  if (error) {
+    console.error("[store] save lỗi:", error);
+    setStatus("⚠ Lưu thất bại: " + error.message);
+  }
   return payload;
 }
 

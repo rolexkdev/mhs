@@ -6,3 +6,7 @@ dist
 # macOS / artifacts
 .DS_Store
 screenshot_lighting.png
+
+# Secrets
+.env
+.env.local

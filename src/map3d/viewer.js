@@ -20,12 +20,18 @@ export async function createViewer() {
     baseLayer: false, baseLayerPicker: false, geocoder: false,
     timeline: false, animation: false, sceneModePicker: false,
     navigationHelpButton: false, homeButton: false, infoBox: true,
+    selectionIndicator: false,   // tắt khung xanh 2D mặc định — tự vẽ viền ôm hình (highlight.js)
     shadows: true,
     logarithmicDepthBuffer: true,
   });
 
   viewer.scene.requestRenderMode = true;
   viewer.scene.maximumRenderTimeChange = Infinity;
+
+  // requestRenderMode: cảnh đứng yên không tự vẽ. Mỗi khi thêm/xóa entity (đặt
+  // cây/cột đèn/đường, preview khi vẽ, handle khi sửa…) phải xin vẽ lại 1 frame,
+  // nếu không thực thể mới "mất tiêu" cho tới khi camera nhúc nhích.
+  viewer.entities.collectionChanged.addEventListener(() => viewer.scene.requestRender());
 
   // Khi camera di chuyển (kéo/zoom), hạ độ phân giải cho mỗi frame nhẹ hơn →
   // mượt dù nhiều billboard; camera dừng thì trả về nét tối đa & vẽ lại 1 frame.
@@ -41,7 +47,9 @@ export async function createViewer() {
   viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
   viewer.screenSpaceEventHandler.setInputAction((e) => {
     if (isInteracting()) return;
-    viewer.selectedEntity = resolveSelection(viewer.scene.pick(e.position));
+    const picked = viewer.scene.pick(e.position);
+    if (picked?.id?._isHighlight) return;   // click trúng viền sáng → giữ nguyên lựa chọn
+    viewer.selectedEntity = resolveSelection(picked);
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
   // Nền bản đồ OSM (globe dùng tile nên không cần chiếu sáng globe).

@@ -16,6 +16,7 @@ import { addBuilding3D, removeBuilding3D } from "../../building3d.js";
 import { registerCollection } from "../store.js";
 import { centroid } from "../geo.js";
 import { drawRect, drawPolygon } from "../interactions.js";
+import { registerSnapSource } from "../snap.js";
 
 // Màu mái theo ngành nghề.
 const ROOF_COLORS = {
@@ -56,15 +57,17 @@ let ctx = null;
 let items = [];                  // mảng building sống (cùng tham chiếu với store)
 const handles = new Map();       // tenCty → {wallPrim, roofPrim, groundH} | null
 
-// Editor state
-let selIdx = null;               // index building đang chọn
-let hndEnts = [];                // entity handle (đỉnh vàng + giữa cạnh xanh)
-let dragHnd = null, dragging = false;
+// Editor state: kéo CẢ KHỐI để di chuyển (không sửa đỉnh).
+let dragIdx = null, dragging = false, moved = false, grabLL = null, basePoly = null;
+let dragPreview = null;   // entity khung viền nhẹ hiện khi đang kéo
 
 function serialize(b) {
   const { tenCty, loaiHinh, loHang, dienTich, dienThoai, height, polygon } = b;
   return { tenCty, loaiHinh, loHang, dienTich, dienThoai, height, polygon };
 }
+
+/** Lưu DB + ghi 1 mốc undo (nếu history đã gắn vào ctx). */
+function commit() { ctx.save(); ctx.recordHistory?.(); }
 
 // ── Render ──────────────────────────────────────────────────────────────────
 /** Popup InfoBox cho 1 building. */
@@ -111,6 +114,7 @@ function render(data) {
       });
       data._clickEntity._polyKey = key;
     }
+    ctx.scene.requestRender();   // requestRenderMode: hiện khối mới ngay, khỏi phải zoom
   }).catch((err) => console.error("[building.render]", key, err));
 }
 
@@ -120,83 +124,38 @@ function remove(data) {
   if (data._clickEntity) { ctx.viewer.entities.remove(data._clickEntity); data._clickEntity = null; }
 }
 
-// ── Editor: handles & properties ────────────────────────────────────────────
-function clearHandles() {
-  hndEnts.forEach((h) => ctx.viewer.entities.remove(h));
-  hndEnts = [];
-  selIdx = null;
-  const p = document.getElementById("ed-props");
-  if (p) p.style.display = "none";
+// ── Editor: kéo cả khối để di chuyển (xem `editing` ở cuối file) ──────────────
+/** Dời _clickEntity (điểm pick InfoBox) về trọng tâm mới khi đang kéo. */
+function moveClickEntity(data) {
+  if (!data._clickEntity) return;
+  const [cLon, cLat] = centroid(data.polygon);
+  data._clickEntity.position = new Cesium.ConstantPositionProperty(
+    Cesium.Cartesian3.fromDegrees(cLon, cLat, (data.height || 16) / 2));
 }
 
-function showHandles(idx) {
-  clearHandles();
-  selIdx = idx;
-  const data = items[idx];
-  const alt = (data.height || 16) + 5;
-  const n = data.polygon.length;
-
-  data.polygon.forEach(([lon, lat], i) => {
-    const e = ctx.viewer.entities.add({
-      position: Cesium.Cartesian3.fromDegrees(lon, lat, alt),
-      point: { pixelSize: 14, color: Cesium.Color.GOLD, outlineColor: Cesium.Color.BLACK, outlineWidth: 2, disableDepthTestDistance: Number.POSITIVE_INFINITY },
-    });
-    e._isHnd = true; e._hndType = "vert"; e._vi = i; e._pi = idx;
-    hndEnts.push(e);
-  });
-  data.polygon.forEach(([lon, lat], i) => {
-    const [lon2, lat2] = data.polygon[(i + 1) % n];
-    const e = ctx.viewer.entities.add({
-      position: Cesium.Cartesian3.fromDegrees((lon + lon2) / 2, (lat + lat2) / 2, alt),
-      point: { pixelSize: 9, color: Cesium.Color.DEEPSKYBLUE, outlineColor: Cesium.Color.WHITE, outlineWidth: 1.5, disableDepthTestDistance: Number.POSITIVE_INFINITY },
-    });
-    e._isHnd = true; e._hndType = "mid"; e._ei = i; e._pi = idx;
-    hndEnts.push(e);
-  });
-
-  buildProps(idx);
-}
-
-function buildProps(idx) {
-  const panel = document.getElementById("ed-props");
-  if (!panel) return;
-  const data = items[idx];
-  panel.innerHTML = `
-    <div class="ep-name">${data.tenCty}</div>
-    <label>Chiều cao (m)<input id="ep-h" type="number" value="${data.height || 16}" min="4" max="60"/></label>
-    <label>Ngành nghề<select id="ep-ind">
-      ${Object.keys(ROOF_COLORS).map((k) => `<option value="${k}"${k === data.loaiHinh ? " selected" : ""}>${k}</option>`).join("")}
-    </select></label>
-    <label>Tên công ty<input id="ep-name" value="${data.tenCty}"/></label>
-    <div class="ep-btns"><button id="ep-apply">Áp dụng</button><button id="ep-del" class="ep-del-btn">Xóa</button></div>`;
-  panel.style.display = "flex";
-
-  document.getElementById("ep-apply").onclick = () => {
-    const newName = document.getElementById("ep-name").value.trim() || data.tenCty;
-    const oldKey = data.tenCty;
-    data.height = +document.getElementById("ep-h").value || 16;
-    data.loaiHinh = document.getElementById("ep-ind").value;
-    if (newName !== oldKey) {
-      const ents = handles.get(oldKey);
-      if (ents) { ents.wall && (ents.wall.name = newName); }
-      if (data._clickEntity) { data._clickEntity.name = newName; data._clickEntity._polyKey = newName; data._clickEntity.description = describe({ ...data, tenCty: newName }); }
-      handles.set(newName, handles.get(oldKey));
-      handles.delete(oldKey);
-      data.tenCty = newName;
-    }
-    render(data); showHandles(idx); ctx.save();
-  };
-  document.getElementById("ep-del").onclick = () => {
-    if (!confirm(`Xóa "${data.tenCty}"?`)) return;
-    removeAt(idx); clearHandles();
-  };
+/** Positions vòng kín của polygon ở độ cao h (m) — vẽ khung viền preview khi kéo. */
+function ringPositions(poly, h) {
+  const pos = poly.map(([lon, lat]) => Cesium.Cartesian3.fromDegrees(lon, lat, h));
+  if (pos.length) pos.push(pos[0]);
+  return pos;
 }
 
 function removeAt(idx) {
   const data = items[idx];
   remove(data);
   items.splice(idx, 1);
-  ctx.save();
+  commit();
+}
+
+/**
+ * Thay TOÀN BỘ danh sách nhà xưởng (dùng cho undo/redo). Xóa render cũ, nạp lại
+ * từ snapshot rồi vẽ lại. Giữ nguyên tham chiếu mảng `items` (store dùng chung).
+ */
+function replaceAll(arr) {
+  for (const b of items) remove(b);
+  items.length = 0;
+  for (const b of arr) { if (!b.height) b.height = 16; items.push(b); }
+  for (const b of items) render(b);
 }
 
 // ── Modal nhập thông tin nhà xưởng mới ───────────────────────────────────────
@@ -215,7 +174,7 @@ function openModal(verts) {
       height: +modal.querySelector("#dm-h").value || 16,
       polygon: verts,
     };
-    items.push(data); render(data); ctx.save();
+    items.push(data); render(data); commit();
     modal.style.display = "none";
     onAfterCreate && onAfterCreate(items.length - 1);
   };
@@ -234,7 +193,13 @@ export const building = {
   init(context) {
     ctx = context;
     items = registerCollection("buildings", serialize);
+    // Góp các đỉnh nhà cho công cụ bắt điểm (snap) dùng chung.
+    registerSnapSource(() => items.flatMap((b) => b.polygon));
   },
+
+  // ── Undo/redo: ảnh chụp & khôi phục toàn bộ nhà xưởng (history.js dùng) ──────
+  getState() { return items.map(serialize); },
+  setState(arr) { replaceAll(Array.isArray(arr) ? arr : []); },
 
   /** Nạp dữ liệu đã lưu (slice = mảng | undefined nếu chưa từng lưu). */
   load(slice) {
@@ -256,12 +221,12 @@ export const building = {
   tools() {
     return [
       {
-        id: "rect", label: "▭ Hộp",
+        id: "rect", label: "▭ Nhà xưởng (hộp)",
         title: "Vẽ hộp chữ nhật: click 2 điểm 1 cạnh rồi kéo bề sâu — luôn vuông góc",
         run: (onHint) => drawRect(ctx, { onHint, onFinish: (corners) => openModal(corners) }),
       },
       {
-        id: "draw", label: "＋ Vẽ", title: "Vẽ tự do từng góc",
+        id: "draw", label: "✐ Nhà xưởng (tự do)", title: "Vẽ nhà xưởng tự do từng góc",
         run: (onHint) => drawPolygon(ctx, { onHint, onFinish: (verts) => openModal(verts) }),
       },
     ];
@@ -277,6 +242,23 @@ export const building = {
   /** Đăng ký callback sau khi tạo building mới (editor: chuyển sang chế độ Sửa). */
   setOnAfterCreate(fn) { onAfterCreate = fn; },
 
+  /** Khung dây 3D (đáy + mái + cạnh đứng) ôm cả khối — cho hiệu ứng chọn. */
+  getHighlight(sel) {
+    const key = sel?._polyKey; if (!key) return null;
+    const data = items.find((b) => b.tenCty === key); if (!data) return null;
+    const base = handles.get(key)?.groundH || 0;
+    const top = base + (data.height || 16);
+    const ring = (z) => {
+      const r = data.polygon.map(([lon, lat]) => Cesium.Cartesian3.fromDegrees(lon, lat, z));
+      if (r.length) r.push(r[0]);
+      return r;
+    };
+    const lines = [ring(base), ring(top)];
+    for (const [lon, lat] of data.polygon)
+      lines.push([Cesium.Cartesian3.fromDegrees(lon, lat, base), Cesium.Cartesian3.fromDegrees(lon, lat, top)]);
+    return { lines, clamp: false };   // khung dây 3D — không bám đất
+  },
+
   /**
    * Khi click trúng khối primitive, scene.pick trả picked.id = key (string).
    * Trả về entity ẩn ở trọng tâm để mở InfoBox của công ty đó.
@@ -288,74 +270,60 @@ export const building = {
     return undefined;
   },
 
-  // ── editing: editor.js gọi tới (xem editor.js) ────────────────────────────
+  // ── editing: editor.js gọi tới — chỉ KÉO CẢ KHỐI để di chuyển + xóa ─────────
   editing: {
-    showHandles, clearHandles,
-    isDragging: () => dragging,
+    /** Tìm index building từ điểm pick (khối primitive = id chuỗi, hoặc điểm InfoBox = _polyKey). */
+    _idxOf(picked) {
+      const e = picked?.id;
+      const key = typeof e === "string" ? e : e?._polyKey;
+      return key ? items.findIndex((b) => b.tenCty === key) : -1;
+    },
 
-    /** LEFT_DOWN: bắt đầu kéo đỉnh? */
-    beginDrag(picked) {
-      const e = picked?.id;
-      if (e && e._isHnd && e._hndType === "vert") { dragHnd = e; dragging = true; return true; }
-      return false;
+    /** LEFT_DOWN: ghi nhận bắt đầu kéo nếu click trúng nhà xưởng (chưa đụng khối). */
+    beginDrag(picked, ll) {
+      if (!ll) return false;
+      const idx = this._idxOf(picked);
+      if (idx < 0) return false;
+      dragIdx = idx; dragging = true; moved = false;
+      grabLL = { lon: ll.lon, lat: ll.lat };
+      basePoly = items[idx].polygon.map((p) => [...p]);   // ảnh chụp để tính delta
+      return true;
     },
-    /** MOUSE_MOVE khi đang kéo đỉnh. */
-    drag(pos) {
-      if (!dragging || !dragHnd) return;
-      const data = items[dragHnd._pi];
-      data.polygon[dragHnd._vi] = [pos.lon, pos.lat];
-      dragHnd.position = new Cesium.ConstantPositionProperty(
-        Cesium.Cartesian3.fromDegrees(pos.lon, pos.lat, (data.height || 16) + 5));
-      render(data);
-      const n = data.polygon.length;
-      hndEnts.filter((e) => e._hndType === "mid" && e._pi === dragHnd._pi).forEach((e) => {
-        const [lo, la] = data.polygon[e._ei % n], [lo2, la2] = data.polygon[(e._ei + 1) % n];
-        e.position = new Cesium.ConstantPositionProperty(
-          Cesium.Cartesian3.fromDegrees((lo + lo2) / 2, (la + la2) / 2, (data.height || 16) + 5));
-      });
+    /** MOUSE_MOVE: dời mọi đỉnh theo cùng 1 delta. Lần kéo ĐẦU mới gỡ khối nặng,
+     *  thay bằng KHUNG VIỀN nhẹ → kéo mượt, không dựng lại liên tục, không rớt khung. */
+    drag(ll) {
+      if (!dragging || !ll) return;
+      const data = items[dragIdx];
+      if (!moved) {
+        moved = true;
+        const h = handles.get(data.tenCty);
+        if (h) { removeBuilding3D(ctx.scene, h); handles.delete(data.tenCty); }
+        dragPreview = ctx.viewer.entities.add({
+          polyline: {
+            positions: ringPositions(basePoly, data.height || 16),
+            width: 2.5,
+            material: new Cesium.ColorMaterialProperty(Cesium.Color.GOLD),
+          },
+        });
+      }
+      const dLon = ll.lon - grabLL.lon, dLat = ll.lat - grabLL.lat;
+      data.polygon = basePoly.map(([lon, lat]) => [lon + dLon, lat + dLat]);
+      if (dragPreview) dragPreview.polyline.positions = ringPositions(data.polygon, data.height || 16);
+      moveClickEntity(data);
     },
-    /** LEFT_UP: kết thúc kéo. true nếu vừa kéo (caller sẽ save). */
-    endDrag() { const was = dragging; dragging = false; dragHnd = null; return was; },
+    /** LEFT_UP: bỏ khung viền, dựng lại khối 3D tại vị trí cuối (đúng 1 lần). */
+    endDrag() {
+      const was = dragging && moved;
+      if (dragPreview) { ctx.viewer.entities.remove(dragPreview); dragPreview = null; }
+      if (was && dragIdx != null) render(items[dragIdx]);
+      dragging = false; dragIdx = null; basePoly = null;
+      return was;
+    },
 
-    /** Đỉnh giữa cạnh → chèn đỉnh mới. true nếu xử lý. */
-    tryAddVertex(picked, pos) {
-      const e = picked?.id;
-      if (e && e._isHnd && e._hndType === "mid" && pos) {
-        items[e._pi].polygon.splice(e._ei + 1, 0, [pos.lon, pos.lat]);
-        render(items[e._pi]); showHandles(e._pi); ctx.save();
-        return true;
-      }
-      return false;
-    },
-    /** Click vào thân building → chọn. true nếu xử lý. */
-    selectByPick(picked) {
-      const e = picked?.id;
-      if (e && e._polyKey) {
-        const idx = items.findIndex((b) => b.tenCty === e._polyKey);
-        if (idx >= 0) { showHandles(idx); return true; }
-      }
-      return false;
-    },
-    /** RIGHT_CLICK trên đỉnh → xóa đỉnh (giữ tối thiểu 3). true nếu xử lý. */
-    tryDeleteVertex(picked) {
-      const e = picked?.id;
-      if (e && e._isHnd && e._hndType === "vert") {
-        const { _vi, _pi } = e;
-        if (items[_pi].polygon.length <= 3) return true;
-        items[_pi].polygon.splice(_vi, 1);
-        render(items[_pi]); showHandles(_pi); ctx.save();
-        return true;
-      }
-      return false;
-    },
-    /** DELETE mode: xóa building theo điểm pick. true nếu xử lý. */
+    /** Chế độ Xóa: xóa building theo điểm pick. true nếu xử lý. */
     tryDelete(picked) {
-      const e = picked?.id;
-      if (e && e._polyKey) {
-        const idx = items.findIndex((b) => b.tenCty === e._polyKey);
-        if (idx >= 0 && confirm(`Xóa "${items[idx].tenCty}"?`)) { removeAt(idx); clearHandles(); }
-        return true;
-      }
+      const idx = this._idxOf(picked);
+      if (idx >= 0) { if (confirm(`Xóa "${items[idx].tenCty}"?`)) removeAt(idx); return true; }
       return false;
     },
   },

@@ -10,6 +10,8 @@
  */
 import * as Cesium from "cesium";
 import { registerCollection } from "../store.js";
+import { placePoint } from "../interactions.js";
+import { circleLonLat } from "../geo.js";
 import { preloadImageHeights, scaleForMeters, VIEW_DISTANCE } from "../billboards.js";
 
 const LAMP_IMG = "models/cotden.png";
@@ -18,6 +20,7 @@ const LAMP_HEIGHT = 17;   // chiều cao cột đèn (m) — ~ngang cây Sao Đe
 let ctx = null;
 let items = [];
 const entities = new Map(); // lp(object) → entity
+let dragLp = null, dragging = false, moved = false, grabLL = null, baseLL = null;   // kéo cột đèn để di chuyển
 
 function serialize(lp) { const { lon, lat } = lp; return { lon, lat }; }
 
@@ -46,6 +49,18 @@ function deleteLamp(lp) {
   ctx.save();
 }
 
+/** Bật đặt cột đèn LIÊN TỤC — trả stop để editor dùng (placePoint tự quản khóa). */
+function startPlacing() {
+  return placePoint(ctx, {
+    surface: true,
+    onPlace: (pos) => {
+      const lp = { lon: pos.lon, lat: pos.lat };
+      items.push(lp); renderOne(lp); ctx.save();
+      ctx.status(`Đã đặt cột đèn: ${items.length} — click tiếp, Esc để dừng`);
+    },
+  });
+}
+
 export const lamp = {
   id: "lamp",
   label: "Cột đèn",
@@ -67,11 +82,41 @@ export const lamp = {
     ctx.scene.requestRender();
   },
 
-  tools() { return []; },
+  tools() {
+    return [{ id: "lamp-add", label: "💡 Cột đèn", title: "Đặt cột đèn — click liên tục, Esc để dừng", run: () => startPlacing() }];
+  },
+
+  /** Vòng tròn sáng dưới chân cột — cho hiệu ứng chọn. */
+  getHighlight(sel) {
+    const lp = sel?._lamp; if (!lp) return null;
+    return { lines: [circleLonLat(+lp.lon, +lp.lat, 2).map(([lon, lat]) => Cesium.Cartesian3.fromDegrees(lon, lat))], clamp: true };
+  },
+
   panel: null,
 
   editing: {
-    /** Xóa cột đèn nếu điểm pick là cột. true nếu đã xử lý. */
+    /** LEFT_DOWN trúng cột đèn → bắt đầu kéo. */
+    beginDrag(picked, ll) {
+      const lp = picked?.id?._lamp;
+      if (!lp || !ll) return false;
+      dragLp = lp; dragging = true; moved = false;
+      grabLL = { lon: ll.lon, lat: ll.lat };
+      baseLL = { lon: +lp.lon, lat: +lp.lat };
+      return true;
+    },
+    /** MOUSE_MOVE: dời cột đèn theo delta con trỏ. */
+    drag(ll) {
+      if (!dragging || !ll) return;
+      moved = true;
+      dragLp.lon = baseLL.lon + (ll.lon - grabLL.lon);
+      dragLp.lat = baseLL.lat + (ll.lat - grabLL.lat);
+      const e = entities.get(dragLp);
+      if (e) e.position = new Cesium.ConstantPositionProperty(Cesium.Cartesian3.fromDegrees(dragLp.lon, dragLp.lat, 0));
+    },
+    /** LEFT_UP: kết thúc kéo. true nếu THỰC SỰ có di chuyển (caller sẽ save). */
+    endDrag() { const was = dragging && moved; dragging = false; dragLp = null; return was; },
+
+    /** Chế độ Xóa: xóa cột đèn nếu điểm pick là cột. true nếu đã xử lý. */
     tryDelete(picked) {
       const lp = picked?.id?._lamp;
       if (lp) { if (confirm("Xóa cột đèn này?")) deleteLamp(lp); return true; }

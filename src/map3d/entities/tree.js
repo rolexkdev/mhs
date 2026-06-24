@@ -10,7 +10,7 @@
  */
 import * as Cesium from "cesium";
 import { registerCollection } from "../store.js";
-import { distanceMeters, pointsAlongLine } from "../geo.js";
+import { distanceMeters, pointsAlongLine, circleLonLat } from "../geo.js";
 import { placePoint, drawRow } from "../interactions.js";
 import { acquire } from "../interactionLock.js";
 import { preloadImageHeights, scaleForMeters, VIEW_DISTANCE } from "../billboards.js";
@@ -28,7 +28,7 @@ const entities = new Map();           // soHieu → model entity
 
 let addSpecies = null, rowSpecies = null, toolStop = null;
 
-let selKey = null, selHnd = null, draggingTree = false;
+let dragKey = null, dragging = false, moved = false, grabLL = null, baseLL = null;   // kéo cây để di chuyển
 
 function serialize(t) {
   const { soHieu, tenLoai, chieuCao, duongKinh, namTrong, trangThai, lon, lat } = t;
@@ -86,13 +86,6 @@ function renderOne(t) {
   entities.set(t.soHieu, e);
 }
 
-function rerender(key) {
-  const old = entities.get(key);
-  if (old) { ctx.viewer.entities.remove(old); entities.delete(key); }
-  const t = items.find((x) => x.soHieu === key);
-  if (t) renderOne(t);
-}
-
 // ── Placement ───────────────────────────────────────────────────────────────
 function exitTool() {
   if (toolStop) { toolStop(); toolStop = null; }
@@ -115,20 +108,22 @@ function placeOne(species, pos) {
   items.push(t); renderOne(t); ctx.save();
 }
 
+/** Bật đặt cây LIÊN TỤC (click bao nhiêu đặt bấy nhiêu) — trả stop để editor dùng. */
 function enterAddMode(species) {
   exitTool();
   addSpecies = species;
   toolStop = placePoint(ctx, {
     surface: true,
-    onPlace: (pos, stop) => {
+    onPlace: (pos) => {
       placeOne(species, pos);
-      stop(); toolStop = null; addSpecies = null;
-      buildPanel(); ctx.status(`3D: ${items.length} cây — click cây để xem thông tin`);
+      buildPanel();
+      ctx.status(`Đang đặt ${species}: ${items.length} cây — click tiếp, Esc để dừng`);
     },
   });
   acquire("tree:add", cancelTool);   // Esc → cancelTool (reset + rebuild panel)
   buildPanel();
-  ctx.status(`Đang thêm: ${species} — Click vào bản đồ để đặt cây. Nhấn Esc để hủy.`);
+  ctx.status(`Đang đặt: ${species} — Click bản đồ để đặt cây (liên tục). Nhấn Esc để dừng.`);
+  return cancelTool;
 }
 
 function placeRow(species, start, end) {
@@ -147,15 +142,17 @@ function placeRow(species, start, end) {
   ctx.status(`Đã thêm ${n} cây ${species} theo hàng`);
 }
 
+/** Vẽ hàng cây LIÊN TỤC (vẽ xong 1 hàng vẽ tiếp được) — trả stop để editor dùng. */
 function enterRowMode(species) {
   exitTool();
   rowSpecies = species;
   toolStop = drawRow(ctx, {
     onHint: (msg) => ctx.status(`Hàng ${species}: ${msg}`),
-    onFinish: (start, end, stop) => { stop(); rowSpecies = null; toolStop = null; placeRow(species, start, end); buildPanel(); },
+    onFinish: (start, end) => { placeRow(species, start, end); buildPanel(); },
   });
   acquire("tree:row", cancelTool);   // Esc → cancelTool
   buildPanel();
+  return cancelTool;
 }
 
 function clearAll() {
@@ -163,7 +160,6 @@ function clearAll() {
   if (!confirm(`Xóa tất cả ${items.length} cây? Thao tác không thể hoàn tác.`)) return;
   for (const e of entities.values()) ctx.viewer.entities.remove(e);
   entities.clear();
-  deselect();
   items.length = 0;
   buildPanel(); ctx.save();
   ctx.status("Đã xóa tất cả cây");
@@ -219,40 +215,13 @@ function buildPanel() {
   panel.style.display = "flex";  // luôn hiện khi đang ở cảnh 3D
 }
 
-// ── Selection / drag / delete ────────────────────────────────────────────────
-function selectTree(key) {
-  deselect();
-  selKey = key;
-  const t = items.find((x) => x.soHieu === key);
-  if (!t) return;
-  selHnd = ctx.viewer.entities.add({
-    position: Cesium.Cartesian3.fromDegrees(t.lon, t.lat, (t.chieuCao || 16) + 4),
-    point: { pixelSize: 14, color: Cesium.Color.LIME, outlineColor: Cesium.Color.BLACK, outlineWidth: 2, heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND, disableDepthTestDistance: Number.POSITIVE_INFINITY },
-  });
-  selHnd._isTreeHnd = true; selHnd._treeKey = key;
-}
-
-function deselect() {
-  if (selHnd) { ctx.viewer.entities.remove(selHnd); selHnd = null; }
-  selKey = null; draggingTree = false;
-}
-
+// ── Drag (di chuyển cây) / delete ────────────────────────────────────────────
 function deleteTree(key) {
   const e = entities.get(key);
   if (e) { ctx.viewer.entities.remove(e); entities.delete(key); }
-  if (selHnd?._treeKey === key) { ctx.viewer.entities.remove(selHnd); selHnd = null; }
   const idx = items.findIndex((t) => t.soHieu === key);
   if (idx >= 0) items.splice(idx, 1);
-  selKey = null; draggingTree = false;
   buildPanel(); ctx.save();
-}
-
-function moveTreeTo(key, lon, lat) {
-  const t = items.find((x) => x.soHieu === key); if (!t) return;
-  t.lon = lon; t.lat = lat;
-  if (selHnd?._treeKey === key)
-    selHnd.position = new Cesium.ConstantPositionProperty(
-      Cesium.Cartesian3.fromDegrees(lon, lat, (t.chieuCao || 16) + 4));
 }
 
 // ── Public entity definition ─────────────────────────────────────────────────
@@ -284,31 +253,58 @@ export const tree = {
     ctx.scene.requestRender();
   },
 
-  tools() { return []; },         // cây dùng panel riêng, không nằm trên toolbar nhà xưởng
+  /** Mỗi loài → 2 công cụ trong menu "Vẽ": đặt 1 cây (liên tục) & vẽ hàng cây.
+   *  Panel cây bên trái vẫn còn (nút +/≡) — dùng chung cùng hàm enterAddMode/enterRowMode. */
+  tools() {
+    return Object.keys(TREE_TYPES).flatMap((sp) => [
+      { id: `tree-add:${sp}`, label: `🌳 ${sp}`, title: `Đặt ${sp} — click liên tục, Esc để dừng`, run: () => enterAddMode(sp) },
+      { id: `tree-row:${sp}`, label: `🌳 Hàng ${sp}`, title: `Vẽ hàng ${sp} — click 2 điểm đầu/cuối`, run: () => enterRowMode(sp) },
+    ]);
+  },
+
+  /** Vòng tròn sáng dưới chân cây — cho hiệu ứng chọn. */
+  getHighlight(sel) {
+    const key = sel?._treeKey; if (!key) return null;
+    const t = items.find((x) => x.soHieu === key); if (!t) return null;
+    const r = Math.max(2, (t.chieuCao || 6) * 0.35);
+    return { lines: [circleLonLat(+t.lon, +t.lat, r).map(([lon, lat]) => Cesium.Cartesian3.fromDegrees(lon, lat))], clamp: true };
+  },
 
   panel: { build: buildPanel, hide: hidePanel },
 
-  // ── editing: editor.js gọi tới ────────────────────────────────────────────
+  // ── editing: editor.js gọi tới — kéo cây để di chuyển + xóa ─────────────────
   editing: {
-    isDragging: () => draggingTree,
-    selectedKey: () => selKey,
-    select: selectTree,
-    deselect,
     deleteTree,
-    rerender,
 
-    /** picked có phải model cây (không phải handle)? trả soHieu hoặc null. */
-    pickKey(picked) {
-      return (picked?.id?._treeKey && !picked.id._isTreeHnd) ? picked.id._treeKey : null;
+    /** LEFT_DOWN trúng billboard cây → bắt đầu kéo. */
+    beginDrag(picked, ll) {
+      const key = picked?.id?._treeKey;
+      if (!key || !ll) return false;
+      const t = items.find((x) => x.soHieu === key); if (!t) return false;
+      dragKey = key; dragging = true; moved = false;
+      grabLL = { lon: ll.lon, lat: ll.lat };
+      baseLL = { lon: +t.lon, lat: +t.lat };
+      return true;
     },
-    /** LEFT_DOWN trên handle cây → bắt đầu kéo. */
-    beginDrag(picked) {
-      if (picked?.id?._isTreeHnd) { draggingTree = true; return true; }
+    /** MOUSE_MOVE: dời cây theo delta con trỏ. */
+    drag(ll) {
+      if (!dragging || !ll) return;
+      moved = true;
+      const t = items.find((x) => x.soHieu === dragKey); if (!t) return;
+      t.lon = baseLL.lon + (ll.lon - grabLL.lon);
+      t.lat = baseLL.lat + (ll.lat - grabLL.lat);
+      const e = entities.get(dragKey);
+      if (e) e.position = new Cesium.ConstantPositionProperty(Cesium.Cartesian3.fromDegrees(t.lon, t.lat, 0));
+    },
+    /** LEFT_UP: kết thúc kéo. true nếu THỰC SỰ có di chuyển (caller sẽ save). */
+    endDrag() { const was = dragging && moved; dragging = false; dragKey = null; return was; },
+
+    /** Chế độ Xóa: xóa cây theo điểm pick. true nếu xử lý. */
+    tryDelete(picked) {
+      const key = picked?.id?._treeKey;
+      if (key) { if (confirm(`Xóa cây "${key}"?`)) deleteTree(key); return true; }
       return false;
     },
-    drag(pos) { if (draggingTree && selKey) moveTreeTo(selKey, pos.lon, pos.lat); },
-    /** LEFT_UP: trả {wasDrag, key} để caller vẽ lại cây tại chỗ mới. */
-    endDrag() { const was = draggingTree; const key = was ? selKey : null; draggingTree = false; return { wasDrag: was, key }; },
   },
 };
 

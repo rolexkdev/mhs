@@ -21,6 +21,7 @@
 import * as Cesium from "cesium";
 import { registerCollection } from "../store.js";
 import { placePoint } from "../interactions.js";
+import { circleLonLat } from "../geo.js";
 
 // ── (1) Khai báo cấu hình riêng của loại thực thể này (tùy chọn) ──────────────
 const COLOR = Cesium.Color.fromCssColorString("#FFD54F");
@@ -29,6 +30,7 @@ const COLOR = Cesium.Color.fromCssColorString("#FFD54F");
 let ctx = null;            // gói dịch vụ dùng chung (viewer, save, pickGround…)
 let items = [];            // mảng instance "sống" — CÙNG tham chiếu với store
 const handles = new Map(); // id instance → entity/primitive đã vẽ (để xóa sau)
+let dragP = null, dragging = false, moved = false, grabLL = null, baseLL = null; // (6) kéo để di chuyển
 
 // ── (2) Chọn trường sẽ LƯU. Bỏ các trường runtime (vd _entity, handle…) ───────
 function serialize(p) {
@@ -45,6 +47,7 @@ function renderOne(p) {
     point: { pixelSize: 12, color: COLOR, outlineColor: Cesium.Color.BLACK, outlineWidth: 2,
              heightReference: Cesium.HeightReference.CLAMP_TO_GROUND },
   });
+  e._tplId = p.id;       // gắn id để editing.beginDrag/tryDelete nhận diện điểm pick
   handles.set(p.id, e);
 }
 
@@ -94,6 +97,53 @@ export const template = {
    * nút bấm gọi startPlacing(). Tùy nhu cầu, bạn có thể trả tool cho toolbar.
    */
   tools() { return []; },
+
+  /**
+   * (6) editing — editor.js DUYỆT mọi entity và gọi các hàm này:
+   *   - chế độ "Sửa": beginDrag(picked, ll) → drag(ll) → endDrag()  (kéo di chuyển)
+   *   - chế độ "Xóa": tryDelete(picked)
+   * `ll` = {lon,lat} điểm trên mặt đất dưới con trỏ. Trả true nếu điểm pick là
+   * của thực thể này (để editor dừng, không hỏi các entity khác). Dùng `_id` gắn
+   * lên entity lúc renderOne để nhận diện (vd renderOne: e._tplId = p.id).
+   */
+  editing: {
+    beginDrag(picked, ll) {
+      const id = picked?.id?._tplId;
+      if (!id || !ll) return false;
+      const p = items.find((x) => x.id === id); if (!p) return false;
+      dragP = p; dragging = true; moved = false;
+      grabLL = { lon: ll.lon, lat: ll.lat };
+      baseLL = { lon: +p.lon, lat: +p.lat };
+      return true;
+    },
+    drag(ll) {
+      if (!dragging || !ll) return;
+      moved = true;
+      dragP.lon = baseLL.lon + (ll.lon - grabLL.lon);
+      dragP.lat = baseLL.lat + (ll.lat - grabLL.lat);
+      const e = handles.get(dragP.id);
+      if (e) e.position = new Cesium.ConstantPositionProperty(Cesium.Cartesian3.fromDegrees(dragP.lon, dragP.lat, 0));
+    },
+    endDrag() { const was = dragging && moved; dragging = false; dragP = null; return was; },
+
+    tryDelete(picked) {
+      const id = picked?.id?._tplId;
+      if (!id) return false;
+      const p = items.find((x) => x.id === id);
+      if (p && confirm(`Xóa ${template.label}?`)) { removeOne(p); ctx.save(); template.panel.build(); }
+      return true;
+    },
+  },
+
+  /**
+   * (tùy chọn) Hiệu ứng CHỌN ôm hình — highlight.js gọi khi click trúng thực thể.
+   * Trả { lines: Cartesian3[][], clamp?: bool } hoặc null. Ở đây: vòng tròn bám đất.
+   */
+  getHighlight(sel) {
+    const id = sel?._tplId; if (!id) return null;
+    const p = items.find((x) => x.id === id); if (!p) return null;
+    return { lines: [circleLonLat(+p.lon, +p.lat, 2).map(([lon, lat]) => Cesium.Cartesian3.fromDegrees(lon, lat))], clamp: true };
+  },
 
   /** (tùy chọn) Panel chú giải riêng bên trái. */
   panel: {

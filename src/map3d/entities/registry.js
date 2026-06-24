@@ -10,5 +10,6 @@
 import { building } from "./building.js";
 import { tree } from "./tree.js";
 import { lamp } from "./lamp.js";
+import { road } from "./road.js";
 
-export const ENTITY_TYPES = [building, tree, lamp];
+export const ENTITY_TYPES = [building, tree, lamp, road];

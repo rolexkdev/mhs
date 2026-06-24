@@ -10,9 +10,13 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "fetch-data": "node scripts/fetch-data.mjs"
+    "fetch-data": "node scripts/fetch-data.mjs",
+    "import-data": "node scripts/import-to-supabase.mjs",
+    "installrtk": "node scripts/install-deps.mjs",
+    "graph": "graphify update . --no-cluster"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.108.2",
     "cesium": "^1.142.0",
     "chart.js": "^4.4.1",
     "leaflet": "^1.9.4"

@@ -2,152 +2,197 @@
  * editor.js — Điều phối CHỈNH SỬA trên cảnh 3D (lớp "nâng cao").
  *
  * Khác với interactions (đặt thực thể MỚI), file này lo việc SỬA thực thể đã có:
- *   - toolbar "Nhà xưởng": Sửa · ▭ Hộp · ＋ Vẽ · 🗑 · ⬇ JSON
- *   - chế độ "Sửa": 1 handler chung điều phối kéo đỉnh nhà / di chuyển cây
- *     bằng cách gọi entity.editing.* (xem building.js & tree.js)
- *   - chế độ "Xóa": click để xóa nhà/cây
+ *   - chế độ "Sửa": kéo-thả để DI CHUYỂN cả thực thể (nhà xưởng/cây/cột đèn/đường)
+ *   - chế độ "Xóa": click để xóa
+ *   - menu "＋ Vẽ ▾": gom công cụ vẽ của mọi entity
  *   - nút "Lấy tọa độ" (coordPicker)
  *
- * Vì việc sửa hình vốn gắn chặt với từng loại, editor gọi trực tiếp building &
- * tree (không qua registry). Thêm thực thể MỚI thì KHÔNG cần đụng file này —
- * chỉ cần khai báo render/serialize/tools trong file entity (xem _TEMPLATE.js).
+ * Cả Sửa lẫn Xóa đều DUYỆT ENTITY_TYPES và gọi editing.beginDrag/drag/endDrag/
+ * tryDelete — nên thêm thực thể MỚI chỉ cần khai báo các hàm đó trong file entity,
+ * KHÔNG phải đụng file này (xem _TEMPLATE.js).
  */
 import * as Cesium from "cesium";
 import { building } from "./entities/building.js";
-import { tree } from "./entities/tree.js";
-import { lamp } from "./entities/lamp.js";
+import { ENTITY_TYPES } from "./entities/registry.js";
 import { exportToFile } from "./store.js";
 import { coordPicker } from "./interactions.js";
 import { acquire, release, cancelActive, activeTool } from "./interactionLock.js";
+import { undo, redo, canUndo, canRedo } from "./history.js";
 
 let ctx = null, viewer = null, scene = null;
-let edMode = null;        // 'edit' | 'rect' | 'draw' | 'delete' | null
+let edMode = null;        // 'edit' | 'delete' | <id tool vẽ> | null
 let edHandler = null;     // handler cho edit/delete
-let toolStop = null;      // stop của tool rect/draw đang chạy
+let toolStop = null;      // stop của tool vẽ đang chạy
+let mover = null;         // entity đang được kéo trong chế độ Sửa
 
 const HINT = {
-  edit: "Click nhà xưởng/cây để chọn → kéo để di chuyển · Điểm xanh = thêm góc · Chuột phải = xóa đỉnh/cây",
-  delete: "Click vào nhà xưởng hoặc cây để xóa",
+  edit: "Click và kéo một thực thể (nhà xưởng / cây / cột đèn / đường) để di chuyển",
+  delete: "Click vào thực thể để xóa",
 };
 
 export function initEditor(context) {
   ctx = context; viewer = ctx.viewer; scene = ctx.scene;
-  // Vẽ xong nhà xưởng → chuyển sang chế độ Sửa & chọn cái vừa tạo.
-  building.setOnAfterCreate((idx) => { setEdMode("edit"); building.editing.showHandles(idx); });
+  // Vẽ xong nhà xưởng → chuyển sang chế độ Sửa để kéo đặt vị trí.
+  building.setOnAfterCreate(() => setEdMode("edit"));
 }
 
-/** Dựng DOM toolbar/hint/props/modal (1 lần) rồi hiển thị toolbar + nút tọa độ. */
+/** Dựng DOM toolbar/hint/modal (1 lần) rồi hiển thị toolbar + nút tọa độ. */
 export function mountEditor() {
   ensureUI();
   ensurePickButton();
+  ensureKeyboard();
+  ensureMenuDismiss();
   buildToolbar();
+}
+
+// ── Undo/redo: nút bấm + phím tắt ────────────────────────────────────────────
+function doUndo() { if (canUndo()) { undo(); ctx.save(); } }
+function doRedo() { if (canRedo()) { redo(); ctx.save(); } }
+
+/** Bật/tắt nút hoàn tác theo trạng thái ngăn xếp (history.onChange gọi). */
+export function refreshUndoButtons() {
+  const u = document.getElementById("et-undo");
+  const r = document.getElementById("et-redo");
+  if (u) u.disabled = !canUndo();
+  if (r) r.disabled = !canRedo();
+}
+
+let kbAttached = false;
+function ensureKeyboard() {
+  if (kbAttached) return;
+  kbAttached = true;
+  document.addEventListener("keydown", (e) => {
+    // Chỉ khi đang ở tab 3D và không gõ trong ô nhập liệu.
+    if (document.getElementById("cesium")?.style.display === "none") return;
+    const t = e.target;
+    if (t && /^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return;
+    if (!(e.ctrlKey || e.metaKey)) return;
+    const k = e.key.toLowerCase();
+    if (k === "z" && !e.shiftKey) { e.preventDefault(); doUndo(); }
+    else if ((k === "z" && e.shiftKey) || k === "y") { e.preventDefault(); doRedo(); }
+  });
 }
 
 // ── Mode switching ───────────────────────────────────────────────────────────
 function setEdMode(mode) {
-  if (edMode === "edit") { building.editing.clearHandles(); tree.editing.deselect(); }
+  if (mover) { mover.editing.endDrag(); mover = null; }   // an toàn nếu đổi mode giữa lúc kéo
+  scene.screenSpaceCameraController.enableRotate = true;
+  scene.screenSpaceCameraController.enableZoom = true;
   if (toolStop) { toolStop(); toolStop = null; }
   if (edHandler) { edHandler.destroy(); edHandler = null; }
   release("editor");
 
   edMode = mode;
+  if (mode) viewer.selectedEntity = undefined;   // bỏ chọn → ẩn InfoBox & viền sáng khi bắt đầu sửa/vẽ/xóa
   viewer.canvas.style.cursor = (mode === "delete") ? "crosshair" : "";
   buildToolbar();
 
   if (mode === "edit") { acquire("editor", () => setEdMode(null)); setupEditHandler(); showHint(HINT.edit); }
   else if (mode === "delete") { acquire("editor", () => setEdMode(null)); setupDeleteHandler(); showHint(HINT.delete); }
   else if (mode) {
-    const tool = building.tools().find((t) => t.id === mode);
+    const tool = allTools().find((t) => t.id === mode);
     if (tool) { toolStop = tool.run(showHint); acquire("editor", () => setEdMode(null)); }
   } else {
     hideHint();
   }
 }
 
-// ── "Sửa": kéo đỉnh nhà / di chuyển cây + chọn / thêm-bớt đỉnh ────────────────
+/** Gom công cụ vẽ của MỌI entity → menu "Vẽ" tự có thực thể mới (chỉ cần khai báo tools()). */
+function allTools() { return ENTITY_TYPES.flatMap((e) => e.tools?.() ?? []); }
+
+// ── "Sửa": KÉO-THẢ để di chuyển cả thực thể (chung cho mọi entity) ────────────
 function setupEditHandler() {
   edHandler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
 
   edHandler.setInputAction((evt) => {
     const picked = scene.pick(evt.position);
-    if (building.editing.beginDrag(picked) || tree.editing.beginDrag(picked)) {
-      scene.screenSpaceCameraController.enableRotate = false;
-      scene.screenSpaceCameraController.enableZoom = false;
+    const ll = ctx.pickGround(evt.position);
+    if (!ll) return;
+    for (const e of ENTITY_TYPES) {
+      if (e.editing?.beginDrag?.(picked, ll)) {
+        mover = e;
+        scene.screenSpaceCameraController.enableRotate = false;
+        scene.screenSpaceCameraController.enableZoom = false;
+        break;
+      }
     }
   }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
 
   edHandler.setInputAction((evt) => {
-    if (building.editing.isDragging()) { const p = ctx.pickGround(evt.endPosition); if (p) building.editing.drag(p); }
-    else if (tree.editing.isDragging()) { const p = ctx.pickGround(evt.endPosition); if (p) tree.editing.drag(p); }
+    if (!mover) return;
+    const ll = ctx.pickGround(evt.endPosition);
+    if (ll) { mover.editing.drag(ll); ctx.render(); }
   }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
   edHandler.setInputAction(() => {
-    const bWas = building.editing.endDrag();
-    const { wasDrag: tWas, key } = tree.editing.endDrag();
+    if (!mover) return;
+    const moved = mover.editing.endDrag();
+    mover = null;
     scene.screenSpaceCameraController.enableRotate = true;
     scene.screenSpaceCameraController.enableZoom = true;
-    if (key) tree.editing.rerender(key);
-    if (bWas || tWas) ctx.save();
+    if (moved) { ctx.save(); ctx.recordHistory?.(); }
   }, Cesium.ScreenSpaceEventType.LEFT_UP);
-
-  edHandler.setInputAction((evt) => {
-    const picked = scene.pick(evt.position);
-    const pos = ctx.pickGround(evt.position);
-    const treeKey = tree.editing.pickKey(picked);
-    if (treeKey) { building.editing.clearHandles(); tree.editing.select(treeKey); return; }
-    if (!picked?.id) { building.editing.clearHandles(); tree.editing.deselect(); return; }
-    if (building.editing.tryAddVertex(picked, pos)) return;
-    if (building.editing.selectByPick(picked)) { tree.editing.deselect(); return; }
-    const e = picked.id;
-    if (!e._isHnd && !e._isTreeHnd) { building.editing.clearHandles(); tree.editing.deselect(); }
-  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-  edHandler.setInputAction((evt) => {
-    const picked = scene.pick(evt.position);
-    const treeKey = tree.editing.pickKey(picked);
-    if (treeKey || tree.editing.selectedKey()) {
-      const key = treeKey || tree.editing.selectedKey();
-      if (key && confirm(`Xóa cây "${key}"?`)) tree.editing.deleteTree(key);
-      return;
-    }
-    if (!picked?.id) return;
-    if (lamp.editing.tryDelete(picked)) return;
-    if (building.editing.tryDeleteVertex(picked)) return;
-    if (picked.id._isTreeHnd) {
-      const key = picked.id._treeKey || tree.editing.selectedKey();
-      if (key && confirm(`Xóa cây "${key}"?`)) tree.editing.deleteTree(key);
-    }
-  }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 }
 
-// ── "Xóa": click để xóa nhà/cây ──────────────────────────────────────────────
+// ── "Xóa": click vào thực thể để xóa (chung cho mọi entity) ───────────────────
 function setupDeleteHandler() {
   edHandler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
   edHandler.setInputAction((evt) => {
     const picked = scene.pick(evt.position);
-    const treeId = picked?.id?._treeKey || null;
-    if (treeId) { if (confirm(`Xóa cây "${treeId}"?`)) tree.editing.deleteTree(treeId); return; }
-    if (lamp.editing.tryDelete(picked)) return;
-    building.editing.tryDelete(picked);
+    for (const e of ENTITY_TYPES) { if (e.editing?.tryDelete?.(picked)) return; }
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 }
 
 // ── Toolbar / hint / DOM ─────────────────────────────────────────────────────
+let menuOpen = false;     // menu "Vẽ ▾" đang mở?
+
 function buildToolbar() {
   const tb = document.getElementById("ed-toolbar"); if (!tb) return;
   tb.style.display = "flex";
-  const toolBtns = building.tools().map((t) =>
-    `<button class="et-btn${edMode === t.id ? " et-on" : ""}" data-tool="${t.id}" title="${t.title}">${t.label}</button>`).join("");
+
+  // Menu "Vẽ": nhóm theo entity, mỗi nhóm là các tool của entity đó.
+  const drawActive = allTools().some((t) => t.id === edMode);
+  const groups = ENTITY_TYPES.map((e) => {
+    const tools = e.tools?.() ?? [];
+    if (!tools.length) return "";
+    const mItems = tools.map((t) =>
+      `<button class="et-mi${edMode === t.id ? " et-mi--on" : ""}" data-tool="${t.id}" title="${t.title}">${t.label}</button>`).join("");
+    return `<div class="et-mgroup"><div class="et-mhead">${e.label}</div>${mItems}</div>`;
+  }).join("");
+
   tb.innerHTML = `
-    <span class="et-label">${building.label}</span>
+    <span class="et-label">Bản đồ 3D</span>
     <button class="et-btn${edMode === "edit" ? " et-on" : ""}" data-mode="edit" title="Chọn & kéo đỉnh để sửa hình">↗ Sửa</button>
-    ${toolBtns}
-    <button class="et-btn${edMode === "delete" ? " et-on et-danger" : ""}" data-mode="delete" title="Xóa nhà xưởng">🗑</button>
+    <div class="et-draw">
+      <button class="et-btn${(drawActive || menuOpen) ? " et-on" : ""}" id="et-draw-btn" title="Chọn thực thể để vẽ">＋ Vẽ ▾</button>
+      <div class="et-menu" id="et-menu" style="display:${menuOpen ? "block" : "none"}">${groups}</div>
+    </div>
+    <button class="et-btn${edMode === "delete" ? " et-on et-danger" : ""}" data-mode="delete" title="Click để xóa nhà xưởng / cây / cột đèn / đường">🗑</button>
+    <div class="et-sep"></div>
+    <button class="et-btn" id="et-undo" title="Hoàn tác (Ctrl+Z)">↶</button>
+    <button class="et-btn" id="et-redo" title="Làm lại (Ctrl+Shift+Z)">↷</button>
     <div class="et-sep"></div>
     <button class="et-btn" id="et-export" title="Tải xuống JSON">⬇ JSON</button>`;
-  tb.querySelectorAll("[data-mode]").forEach((b) => b.onclick = () => setEdMode(edMode === b.dataset.mode ? null : b.dataset.mode));
-  tb.querySelectorAll("[data-tool]").forEach((b) => b.onclick = () => setEdMode(edMode === b.dataset.tool ? null : b.dataset.tool));
+
+  tb.querySelectorAll("[data-mode]").forEach((b) => b.onclick = () => { menuOpen = false; setEdMode(edMode === b.dataset.mode ? null : b.dataset.mode); });
+  tb.querySelector("#et-draw-btn").onclick = (ev) => { ev.stopPropagation(); menuOpen = !menuOpen; buildToolbar(); };
+  tb.querySelectorAll("[data-tool]").forEach((b) => b.onclick = () => { menuOpen = false; setEdMode(edMode === b.dataset.tool ? null : b.dataset.tool); });
+  document.getElementById("et-undo").onclick = doUndo;
+  document.getElementById("et-redo").onclick = doRedo;
   document.getElementById("et-export").onclick = exportToFile;
+  refreshUndoButtons();
+}
+
+let menuDismissAttached = false;
+/** Click ra ngoài menu "Vẽ" → đóng menu. */
+function ensureMenuDismiss() {
+  if (menuDismissAttached) return;
+  menuDismissAttached = true;
+  document.addEventListener("click", (e) => {
+    if (!menuOpen) return;
+    if (e.target.closest?.(".et-draw")) return;   // click trong vùng nút/menu thì bỏ qua
+    menuOpen = false; buildToolbar();
+  });
 }
 
 function showHint(text) { const h = document.getElementById("ed-hint"); if (h) { h.textContent = text; h.style.display = "block"; } }
@@ -158,7 +203,6 @@ function ensureUI() {
   const stage = document.getElementById("stage");
   const tb = document.createElement("div"); tb.id = "ed-toolbar"; stage.appendChild(tb);
   const hint = document.createElement("div"); hint.id = "ed-hint"; hint.style.display = "none"; stage.appendChild(hint);
-  const props = document.createElement("div"); props.id = "ed-props"; props.style.display = "none"; stage.appendChild(props);
 
   const modal = document.createElement("div"); modal.id = "draw-modal"; modal.style.display = "none";
   modal.innerHTML = `<div class="dm-box">

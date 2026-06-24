@@ -47,6 +47,20 @@ export function pointsAlongLine(start, end, n) {
 }
 
 /**
+ * Vòng tròn quanh tâm (lon,lat) bán kính `radiusM` mét → mảng [[lon,lat], …] kín.
+ * Dùng cho hiệu ứng chọn quanh thực thể dạng điểm (cây, cột đèn).
+ */
+export function circleLonLat(lon, lat, radiusM, seg = 28) {
+  const MLON = metersPerDegLon(lat), MLAT = METERS_PER_DEG_LAT;
+  const out = [];
+  for (let i = 0; i <= seg; i++) {
+    const a = (i / seg) * Math.PI * 2;
+    out.push([lon + (Math.cos(a) * radiusM) / MLON, lat + (Math.sin(a) * radiusM) / MLAT]);
+  }
+  return out;
+}
+
+/**
  * Hình chữ nhật từ 1 cạnh (p1→p2) + bề sâu = khoảng vuông góc từ con trỏ tới cạnh.
  * Tính trong hệ mét cục bộ để góc luôn vuông, ở mọi góc xoay của lô.
  * Trả về 4 đỉnh [[lon,lat], …].

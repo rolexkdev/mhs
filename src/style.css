@@ -188,6 +188,65 @@ body { font-family:system-ui,Segoe UI,sans-serif; }
 .et-btn.et-on:hover { background: #0d47a1; }
 .et-btn.et-danger { background: #c62828; color: #fff; border-color: #c62828; }
 .et-sep { width: 1px; height: 22px; background: #ddd; margin: 0 2px; }
+.et-btn:disabled { opacity: .35; cursor: default; background: #f8f8f8; color: #333; border-color: #ddd; }
+.et-btn:disabled:hover { background: #f8f8f8; color: #333; border-color: #ddd; }
+
+/* ── Menu "Vẽ ▾" (gom công cụ vẽ của mọi thực thể) ────────── */
+.et-draw { position: relative; display: inline-flex; }
+.et-menu {
+  position: absolute;
+  bottom: calc(100% + 8px); right: 0;     /* mở LÊN trên (toolbar ở đáy) */
+  min-width: 200px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.28);
+  padding: 6px;
+  z-index: 1100;
+}
+.et-mgroup + .et-mgroup { margin-top: 4px; border-top: 1px solid #eee; padding-top: 4px; }
+.et-mhead {
+  font-size: 10.5px; font-weight: 700; color: #999;
+  text-transform: uppercase; letter-spacing: .5px;
+  padding: 4px 8px 2px;
+}
+.et-mi {
+  display: block; width: 100%; text-align: left;
+  border: none; background: none; cursor: pointer;
+  padding: 7px 10px; border-radius: 6px;
+  font-size: 13px; font-weight: 500; color: #333;
+  white-space: nowrap;
+}
+.et-mi:hover { background: #e3f2fd; color: #1565c0; }
+.et-mi--on { background: #1565c0; color: #fff; }
+.et-mi--on:hover { background: #0d47a1; color: #fff; }
+
+/* ── Tooltip số đo realtime khi vẽ ────────────────────────── */
+#measure-tip {
+  position: absolute;
+  z-index: 1100;
+  pointer-events: none;
+  background: rgba(20,20,20,.88);
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,.4);
+}
+#measure-tip .mt-ang {
+  margin-left: 6px;
+  padding-left: 6px;
+  border-left: 1px solid rgba(255,255,255,.3);
+  color: #8be9fd;
+}
+#measure-tip .mt-ortho {
+  margin-left: 6px;
+  padding-left: 6px;
+  border-left: 1px solid rgba(255,255,255,.3);
+  color: #50fa7b;          /* xanh lá = đang căn thẳng */
+  font-weight: 700;
+}
 
 /* ── Editor hint bar ─────────────────────────────────────── */
 #ed-hint {
@@ -416,3 +475,22 @@ body { font-family:system-ui,Segoe UI,sans-serif; }
   border-top-color: #ffcc02;
   color: #e65100;
 }
+
+/* ── Đăng nhập (Supabase Auth) ──────────────────────────────────── */
+.auth-btn{ margin-left:auto; background:rgba(255,255,255,.15); color:#fff;
+  border:1px solid rgba(255,255,255,.4); border-radius:6px; padding:6px 12px;
+  cursor:pointer; font-size:13px; }
+.auth-btn:hover{ background:rgba(255,255,255,.28); }
+
+#login-modal{ position:fixed; inset:0; background:rgba(0,0,0,.45);
+  display:none; align-items:center; justify-content:center; z-index:9999; }
+#login-modal .lm-box{ background:#fff; border-radius:10px; padding:22px 24px;
+  width:320px; box-shadow:0 12px 40px rgba(0,0,0,.3); font-family:system-ui; }
+#login-modal .lm-title{ font-size:18px; font-weight:700; margin-bottom:14px; }
+#login-modal input{ width:100%; box-sizing:border-box; padding:9px 11px; margin-bottom:10px;
+  border:1px solid #ccc; border-radius:6px; font-size:14px; }
+#login-modal .lm-err{ color:#c62828; font-size:12px; min-height:16px; margin-bottom:6px; }
+#login-modal .lm-btns{ display:flex; gap:8px; justify-content:flex-end; }
+#login-modal .lm-btns button{ padding:8px 16px; border-radius:6px; border:0; cursor:pointer; font-size:14px; }
+#login-modal #lm-ok{ background:#1565c0; color:#fff; }
+#login-modal #lm-cancel{ background:#eee; }
