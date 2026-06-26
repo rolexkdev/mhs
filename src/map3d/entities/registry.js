@@ -11,5 +11,7 @@ import { building } from "./building.js";
 import { tree } from "./tree.js";
 import { lamp } from "./lamp.js";
 import { road } from "./road.js";
+import { lake, grass, ditch } from "./more.js";
 
-export const ENTITY_TYPES = [building, tree, lamp, road];
+// Thứ tự = thứ tự nạp/vẽ. Vùng phẳng (hồ/cỏ) để TRƯỚC để nằm dưới các lớp khác.
+export const ENTITY_TYPES = [grass, lake, building, road, ditch, tree, lamp];
